@@ -3,9 +3,11 @@ import '../styles/LandingPage.css';
 
 interface LandingPageProps {
   onGetStarted: () => void;
+  onSignIn: () => void;
+  onSignUp: () => void;
 }
 
-function LandingPage({ onGetStarted }: LandingPageProps) {
+function LandingPage({ onGetStarted, onSignIn, onSignUp }: LandingPageProps) {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -44,9 +46,9 @@ function LandingPage({ onGetStarted }: LandingPageProps) {
             <a href="#features">Features</a>
           </div>
           <div className="nav-actions">
-            <a href="#" className="nav-signin">Sign In</a>
-            <button className="nav-cta" onClick={onGetStarted}>
-              Start for Free
+            <button className="nav-signin" onClick={onSignIn}>Sign In</button>
+            <button className="nav-cta" onClick={onSignUp}>
+              Sign Up
             </button>
           </div>
         </div>
