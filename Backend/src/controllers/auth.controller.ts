@@ -107,7 +107,7 @@ export const verifyOTPController = async (
     // Generate JWT token
     const token = generateToken({
       userId: user._id.toString(),
-      phone: user.phone,
+      phone: user.phone || user.email || '',
     });
 
     res.status(200).json({
@@ -118,7 +118,8 @@ export const verifyOTPController = async (
         user: {
           id: user._id,
           name: user.name,
-          phone: user.phone,
+          phone: user.phone || '',
+          email: user.email,
           state: user.state,
           district: user.district,
           landSize: user.landSize,
@@ -319,7 +320,10 @@ export const verifyEmailOTPController = async (
       user.isEmailVerified = true;
       await user.save();
 
-      const token = generateToken({ userId: user._id.toString(), phone: user.phone });
+      const token = generateToken({ 
+        userId: user._id.toString(), 
+        phone: user.phone || user.email || '' 
+      });
 
       res.status(200).json({
         success: true,
@@ -329,7 +333,7 @@ export const verifyEmailOTPController = async (
           user: {
             id: user._id,
             name: user.name,
-            phone: user.phone,
+            phone: user.phone || '',
             email: user.email,
             state: user.state,
             district: user.district,
@@ -355,7 +359,10 @@ export const verifyEmailOTPController = async (
         isEmailVerified: true,
       });
 
-      const token = generateToken({ userId: user._id.toString(), phone: user.phone });
+      const token = generateToken({ 
+        userId: user._id.toString(), 
+        phone: user.phone || user.email || '' 
+      });
 
       // Send welcome email (don't wait for it)
       sendWelcomeEmail(email, userData.name).catch(err => 
@@ -370,7 +377,7 @@ export const verifyEmailOTPController = async (
           user: {
             id: user._id,
             name: user.name,
-            phone: user.phone,
+            phone: user.phone || '',
             email: user.email,
             state: user.state,
             district: user.district,

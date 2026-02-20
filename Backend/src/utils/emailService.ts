@@ -25,11 +25,9 @@ const createTransporter = () => {
 // Send OTP via Email
 export const sendOTPEmail = async (email: string, otp: string): Promise<boolean> => {
   try {
-    console.log(`📧 Sending OTP to ${email}: ${otp}`);
-    
     // Development mode - log to console
     if (process.env.NODE_ENV !== 'production') {
-      console.log(`✅ [DEV MODE] OTP for ${email}: ${otp}`);
+      console.log(`[DEV MODE] OTP for ${email}: ${otp}`);
       return true;
     }
 
@@ -37,8 +35,8 @@ export const sendOTPEmail = async (email: string, otp: string): Promise<boolean>
     const transporter = createTransporter();
 
     if (!transporter) {
-      console.error('❌ Email service not configured. Check .env file.');
-      console.log(`🔧 [FALLBACK] OTP for ${email}: ${otp}`);
+      console.error('Email service not configured. Check .env file.');
+      console.log(`[FALLBACK] OTP for ${email}: ${otp}`);
       return true; // Return true to not block registration
     }
 
@@ -98,13 +96,13 @@ export const sendOTPEmail = async (email: string, otp: string): Promise<boolean>
 
     // Send email
     const info = await transporter.sendMail(mailOptions);
-    console.log(`✅ OTP email sent successfully to ${email}. Message ID: ${info.messageId}`);
+    console.log(`OTP email sent to ${email}. Message ID: ${info.messageId}`);
     return true;
 
   } catch (error) {
-    console.error('❌ Error sending OTP email:', error);
+    console.error('Error sending OTP email:', error);
     // In case of error, log OTP so registration can continue
-    console.log(`🔧 [FALLBACK] OTP for ${email}: ${otp}`);
+    console.log(`[FALLBACK] OTP for ${email}: ${otp}`);
     return true;
   }
 };

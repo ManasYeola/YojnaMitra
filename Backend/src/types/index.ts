@@ -4,7 +4,7 @@ import { Document } from 'mongoose';
 // User Types
 export interface IUser extends Document {
   name: string;
-  phone: string;
+  phone?: string;
   email?: string;
   state: string;
   district: string;
