@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 30
+    },
+    "auditLog": "D:\\YojnaMitra\\sync-service\\logs\\.b8f532e2202e580a5fe894a15394367ab9ab60c7-audit.json",
+    "files": [
+        {
+            "date": 1771614324733,
+            "name": "D:\\YojnaMitra\\sync-service\\logs\\error-2026-02-21.log",
+            "hash": "403caf25f558263345cca4282c1cf622298a25c051d3e7f8e9df57c397ea9fbe"
+        }
+    ],
+    "hashType": "sha256"
+}
