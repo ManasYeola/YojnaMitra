@@ -8,11 +8,14 @@ interface SignInPageProps {
   onSwitchToSignUp: () => void;
 }
 
-type SignInStep = 'phone' | 'otp';
+type SignInStep = 'input' | 'otp';
+type AuthMethod = 'phone' | 'email';
 
 function SignInPage({ onAuthSuccess, onBack, onSwitchToSignUp }: SignInPageProps) {
-  const [step, setStep] = useState<SignInStep>('phone');
+  const [step, setStep] = useState<SignInStep>('input');
+  const [authMethod, setAuthMethod] = useState<AuthMethod>('email'); // Default to email
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -23,10 +26,16 @@ function SignInPage({ onAuthSuccess, onBack, onSwitchToSignUp }: SignInPageProps
     setError('');
 
     try {
-      const response = await authService.sendOTP(phone);
-      console.log('OTP Response:', response);
+      if (authMethod === 'email') {
+        const response = await authService.sendEmailOTP(email);
+        console.log('Email OTP Response:', response);
+        alert('OTP sent to your email! Check your inbox or backend terminal.');
+      } else {
+        const response = await authService.sendOTP(phone);
+        console.log('Phone OTP Response:', response);
+        alert('OTP sent to your phone! Check backend terminal.');
+      }
       setStep('otp');
-      alert('OTP sent successfully! Check console in development mode.');
     } catch (err: any) {
       setError(err.message || 'Failed to send OTP. Please try again.');
     } finally {
@@ -40,20 +49,37 @@ function SignInPage({ onAuthSuccess, onBack, onSwitchToSignUp }: SignInPageProps
     setError('');
 
     try {
-      const response = await authService.verifyOTP(phone, otp);
-      
-      if (response.success && response.data) {
-        const user = response.data.user;
+      if (authMethod === 'email') {
+        const response = await authService.verifyEmailOTP(email, otp);
         
-        // Check if user has complete profile
-        if (!user.name || !user.state || !user.district || !user.landSize || !user.cropType) {
-          setError('Account not found or incomplete. Please sign up first.');
-          setLoading(false);
-          return;
+        if (response.success && response.data) {
+          const user = response.data.user;
+          
+          // Check if user has complete profile
+          if (!user.name || !user.state || !user.district || !user.landSize || !user.cropType) {
+            setError('Account not found or incomplete. Please sign up first.');
+            setLoading(false);
+            return;
+          }
+          
+          onAuthSuccess();
         }
+      } else {
+        const response = await authService.verifyOTP(phone, otp);
         
-        // Existing user with complete profile
-        onAuthSuccess();
+        if (response.success && response.data) {
+          const user = response.data.user;
+          
+          // Check if user has complete profile
+          if (!user.name || !user.state || !user.district || !user.landSize || !user.cropType) {
+            setError('Account not found or incomplete. Please sign up first.');
+            setLoading(false);
+            return;
+          }
+          
+          // Existing user with complete profile
+          onAuthSuccess();
+        }
       }
     } catch (err: any) {
       setError(err.message || 'Invalid OTP. Please try again.');
@@ -70,28 +96,63 @@ function SignInPage({ onAuthSuccess, onBack, onSwitchToSignUp }: SignInPageProps
         <div className="auth-card">
           <h1 className="auth-title">Sign In</h1>
           <p className="auth-subtitle">
-            {step === 'phone' 
-              ? 'Enter your phone number to receive OTP' 
-              : 'Enter the OTP sent to your phone'}
+            {step === 'input' 
+              ? 'Enter your credentials to sign in' 
+              : `Enter the OTP sent to your ${authMethod === 'email' ? 'email' : 'phone'}`}
           </p>
 
           {error && <div className="auth-error">{error}</div>}
 
-          {step === 'phone' && (
+          {step === 'input' && (
             <form onSubmit={handleSendOTP} className="auth-form">
-              <div className="form-group">
-                <label htmlFor="phone">Phone Number</label>
-                <input
-                  type="tel"
-                  id="phone"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="Enter 10-digit phone number"
-                  pattern="[0-9]{10}"
-                  required
-                  disabled={loading}
-                />
+              {/* Auth Method Toggle */}
+              <div className="auth-method-toggle">
+                <button
+                  type="button"
+                  className={`toggle-btn ${authMethod === 'email' ? 'active' : ''}`}
+                  onClick={() => setAuthMethod('email')}
+                >
+                  📧 Email (FREE!)
+                </button>
+                <button
+                  type="button"
+                  className={`toggle-btn ${authMethod === 'phone' ? 'active' : ''}`}
+                  onClick={() => setAuthMethod('phone')}
+                >
+                  📱 Phone
+                </button>
               </div>
+
+              {authMethod === 'email' ? (
+                <div className="form-group">
+                  <label htmlFor="email">Email Address</label>
+                  <input
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email address"
+                    required
+                    disabled={loading}
+                  />
+                  <small>✅ No SMS charges! OTP sent to your email</small>
+                </div>
+              ) : (
+                <div className="form-group">
+                  <label htmlFor="phone">Phone Number</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="Enter 10-digit phone number"
+                    pattern="[0-9]{10}"
+                    required
+                    disabled={loading}
+                  />
+                  <small>We'll send you an OTP via SMS</small>
+                </div>
+              )}
 
               <button type="submit" className="auth-button" disabled={loading}>
                 {loading ? 'Sending OTP...' : 'Send OTP'}
@@ -123,10 +184,10 @@ function SignInPage({ onAuthSuccess, onBack, onSwitchToSignUp }: SignInPageProps
               <button 
                 type="button" 
                 className="auth-link-button" 
-                onClick={() => setStep('phone')}
+                onClick={() => setStep('input')}
                 disabled={loading}
               >
-                Change Phone Number
+                Change Login Method
               </button>
             </form>
           )}

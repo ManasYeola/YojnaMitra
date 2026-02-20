@@ -4,7 +4,8 @@ import { Document } from 'mongoose';
 // User Types
 export interface IUser extends Document {
   name: string;
-  phone: string;
+  phone?: string;
+  email?: string;
   state: string;
   district: string;
   landSize: number;
@@ -13,6 +14,7 @@ export interface IUser extends Document {
   age?: number;
   incomeRange?: string;
   isPhoneVerified: boolean;
+  isEmailVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -68,7 +70,8 @@ export interface IDocument extends Document {
 
 // OTP Types
 export interface IOTP extends Document {
-  phone: string;
+  phone?: string;
+  email?: string;
   otp: string;
   expiresAt: Date;
   isUsed: boolean;

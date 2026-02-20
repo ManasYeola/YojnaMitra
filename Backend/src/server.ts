@@ -16,6 +16,10 @@ import documentRoutes from './routes/document.routes';
 // Load environment variables
 dotenv.config();
 
+// Debug: Check NODE_ENV
+console.log('🔧 NODE_ENV:', process.env.NODE_ENV);
+console.log('📧 EMAIL_USER:', process.env.EMAIL_USER ? '✓ Configured' : '✗ Not configured');
+
 // Create Express app
 const app: Application = express();
 

@@ -12,10 +12,19 @@ const userSchema = new Schema<IUser>(
     },
     phone: {
       type: String,
-      required: [true, 'Phone number is required'],
+      required: false,
       unique: true,
+      sparse: true,
       match: [/^[0-9]{10}$/, 'Please enter a valid 10-digit phone number'],
+    },
+    email: {
+      type: String,
+      required: false,
+      trim: true,
+      lowercase: true,
+      match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email address'],
       index: true,
+      sparse: true,
     },
     state: {
       type: String,
@@ -59,11 +68,24 @@ const userSchema = new Schema<IUser>(
       type: Boolean,
       default: false,
     },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
   }
 );
+
+// Custom validation: At least one of phone or email is required
+userSchema.pre('validate', function(next) {
+  if (!this.phone && !this.email) {
+    this.invalidate('phone', 'Either phone number or email is required');
+    this.invalidate('email', 'Either phone number or email is required');
+  }
+  next();
+});
 
 // Indexes for faster queries
 userSchema.index({ state: 1, district: 1 });

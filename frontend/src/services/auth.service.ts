@@ -6,14 +6,25 @@ export interface SendOTPRequest {
   phone: string;
 }
 
+export interface SendEmailOTPRequest {
+  email: string;
+}
+
 export interface VerifyOTPRequest {
   phone: string;
   otp: string;
 }
 
+export interface VerifyEmailOTPRequest {
+  email: string;
+  otp: string;
+  userData?: any;
+}
+
 export interface UserProfile {
   _id: string;
   phone: string;
+  email?: string;
   name?: string;
   state?: string;
   district?: string;
@@ -67,6 +78,39 @@ export const authService = {
       const response = await apiService.post<AuthResponse>(
         API_CONFIG.ENDPOINTS.VERIFY_OTP,
         { phone, otp }
+      );
+      
+      // Store token and user data
+      if (response.data.success && response.data.data) {
+        localStorage.setItem('authToken', response.data.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.data.user));
+      }
+      
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data || error;
+    }
+  },
+
+  // Send OTP to email (FREE!)
+  sendEmailOTP: async (email: string): Promise<AuthResponse> => {
+    try {
+      const response = await apiService.post<AuthResponse>(
+        API_CONFIG.ENDPOINTS.SEND_EMAIL_OTP,
+        { email }
+      );
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data || error;
+    }
+  },
+
+  // Verify Email OTP and login/register
+  verifyEmailOTP: async (email: string, otp: string, userData?: any): Promise<AuthResponse> => {
+    try {
+      const response = await apiService.post<AuthResponse>(
+        API_CONFIG.ENDPOINTS.VERIFY_EMAIL_OTP,
+        { email, otp, userData }
       );
       
       // Store token and user data
