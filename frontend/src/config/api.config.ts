@@ -6,6 +6,8 @@ export const API_CONFIG = {
     // Auth endpoints
     SEND_OTP: '/api/auth/send-otp',
     VERIFY_OTP: '/api/auth/verify-otp',
+    SEND_EMAIL_OTP: '/api/auth/send-email-otp',
+    VERIFY_EMAIL_OTP: '/api/auth/verify-email-otp',
     GET_PROFILE: '/api/auth/profile',
     UPDATE_PROFILE: '/api/auth/profile',
     

@@ -2,6 +2,8 @@ import { Router } from 'express';
 import {
   sendOTPController,
   verifyOTPController,
+  sendEmailOTPController,
+  verifyEmailOTPController,
   getProfile,
   updateProfile,
 } from '../controllers/auth.controller';
@@ -11,7 +13,8 @@ import { validate } from '../middleware/validation.middleware';
 
 const router = Router();
 
-// Send OTP
+// Phone OTP Routes
+// Send OTP to Phone
 router.post(
   '/send-otp',
   validate([
@@ -22,7 +25,7 @@ router.post(
   sendOTPController
 );
 
-// Verify OTP and register/login
+// Verify Phone OTP and register/login
 router.post(
   '/verify-otp',
   validate([
@@ -34,6 +37,34 @@ router.post(
       .withMessage('OTP must be 6 digits'),
   ]),
   verifyOTPController
+);
+
+// Email OTP Routes (FREE - No SMS charges!)
+// Send OTP to Email
+router.post(
+  '/send-email-otp',
+  validate([
+    body('email')
+      .isEmail()
+      .withMessage('Please provide a valid email address')
+      .normalizeEmail(),
+  ]),
+  sendEmailOTPController
+);
+
+// Verify Email OTP and register/login
+router.post(
+  '/verify-email-otp',
+  validate([
+    body('email')
+      .isEmail()
+      .withMessage('Please provide a valid email address')
+      .normalizeEmail(),
+    body('otp')
+      .isLength({ min: 6, max: 6 })
+      .withMessage('OTP must be 6 digits'),
+  ]),
+  verifyEmailOTPController
 );
 
 // Get user profile (Protected)

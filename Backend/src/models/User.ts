@@ -17,6 +17,14 @@ const userSchema = new Schema<IUser>(
       match: [/^[0-9]{10}$/, 'Please enter a valid 10-digit phone number'],
       index: true,
     },
+    email: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email address'],
+      index: true,
+      sparse: true,
+    },
     state: {
       type: String,
       required: [true, 'State is required'],
@@ -56,6 +64,10 @@ const userSchema = new Schema<IUser>(
       trim: true,
     },
     isPhoneVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isEmailVerified: {
       type: Boolean,
       default: false,
     },

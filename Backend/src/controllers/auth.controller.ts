@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import User from '../models/User';
 import { generateToken } from '../utils/jwtUtils';
-import { saveOTP, verifyOTP, sendOTP } from '../utils/otpService';
+import { saveOTP, verifyOTP, sendOTP, saveEmailOTP, verifyEmailOTP } from '../utils/otpService';
+import { sendOTPEmail, sendWelcomeEmail } from '../utils/emailService';
 import { ApiResponse, AuthRequest } from '../types';
 
 // Send OTP for registration/login
@@ -222,6 +223,169 @@ export const updateProfile = async (
     res.status(500).json({
       success: false,
       message: 'Failed to update profile',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+};
+
+// Send OTP to Email for registration/login
+export const sendEmailOTPController = async (
+  req: Request,
+  res: Response<ApiResponse>
+): Promise<void> => {
+  try {
+    const { email } = req.body;
+
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+      res.status(400).json({
+        success: false,
+        message: 'Valid email address is required',
+      });
+      return;
+    }
+
+    // Generate and save OTP
+    const otp = await saveEmailOTP(email);
+
+    // Send OTP via Email
+    const sent = await sendOTPEmail(email, otp);
+
+    if (!sent) {
+      res.status(500).json({
+        success: false,
+        message: 'Failed to send OTP. Please try again.',
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'OTP sent successfully to your email',
+      data: {
+        email,
+        expiresIn: '10 minutes',
+      },
+    });
+  } catch (error) {
+    console.error('Error in sendEmailOTPController:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send OTP',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+};
+
+// Verify Email OTP and register/login user
+export const verifyEmailOTPController = async (
+  req: Request,
+  res: Response<ApiResponse>
+): Promise<void> => {
+  try {
+    const { email, otp, userData } = req.body;
+
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+      res.status(400).json({
+        success: false,
+        message: 'Valid email address is required',
+      });
+      return;
+    }
+
+    if (!otp || otp.length !== 6) {
+      res.status(400).json({
+        success: false,
+        message: 'Valid 6-digit OTP is required',
+      });
+      return;
+    }
+
+    // Verify OTP
+    const isValidOTP = await verifyEmailOTP(email, otp);
+
+    if (!isValidOTP) {
+      res.status(400).json({
+        success: false,
+        message: 'Invalid or expired OTP',
+      });
+      return;
+    }
+
+    // Check if user already exists
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // Existing user - login
+      user.isEmailVerified = true;
+      await user.save();
+
+      const token = generateToken({ userId: user._id.toString(), phone: user.phone });
+
+      res.status(200).json({
+        success: true,
+        message: 'Login successful',
+        data: {
+          token,
+          user: {
+            id: user._id,
+            name: user.name,
+            phone: user.phone,
+            email: user.email,
+            state: user.state,
+            district: user.district,
+            landSize: user.landSize,
+            cropType: user.cropType,
+            farmerCategory: user.farmerCategory,
+          },
+        },
+      });
+    } else {
+      // New user - register
+      if (!userData) {
+        res.status(400).json({
+          success: false,
+          message: 'User data is required for registration',
+        });
+        return;
+      }
+
+      user = await User.create({
+        ...userData,
+        email,
+        isEmailVerified: true,
+      });
+
+      const token = generateToken({ userId: user._id.toString(), phone: user.phone });
+
+      // Send welcome email (don't wait for it)
+      sendWelcomeEmail(email, userData.name).catch(err => 
+        console.error('Failed to send welcome email:', err)
+      );
+
+      res.status(201).json({
+        success: true,
+        message: 'Registration successful',
+        data: {
+          token,
+          user: {
+            id: user._id,
+            name: user.name,
+            phone: user.phone,
+            email: user.email,
+            state: user.state,
+            district: user.district,
+            landSize: user.landSize,
+            cropType: user.cropType,
+            farmerCategory: user.farmerCategory,
+          },
+        },
+      });
+    }
+  } catch (error) {
+    console.error('Error in verifyEmailOTPController:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to verify OTP',
       error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
