@@ -20,7 +20,7 @@
 
 const path = require('path');
 // Backend/src/scripts/ → Backend/src/.env is one level up
-require('dotenv').config({ path: path.join(__dirname, '../.env') });
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const mongoose = require('mongoose');
 const axios    = require('axios');
 
