@@ -18,7 +18,7 @@
  */
 
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../.env') });
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const mongoose = require('mongoose');
 const axios    = require('axios');
 
@@ -202,13 +202,13 @@ function chunks(arr, size) {
 
 async function main() {
   if (!GROQ_API_KEY) {
-    console.error('❌ GROQ_API_KEY is not set in Backend/src/.env');
+    console.error('❌ GROQ_API_KEY is not set in Backend/.env');
     process.exit(1);
   }
 
   const uri = process.env.SCHEMES_MONGO_URI || process.env.MONGO_URI;
   if (!uri) {
-    console.error('❌ SCHEMES_MONGO_URI is not set in Backend/src/.env');
+    console.error('❌ SCHEMES_MONGO_URI is not set in Backend/.env');
     process.exit(1);
   }
 

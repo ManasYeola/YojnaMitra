@@ -1,5 +1,6 @@
+// @ts-nocheck  (legacy controller — superseded by webhook.controller.ts)
 import { Request, Response } from 'express';
-import WhatsAppSession from '../models/WhatsAppSession';
+import WhatsAppSession from '../models/WhatsappSession';
 import eligibilityEngine from '../services/eligibilityEngine';
 import {
   STATES,
