@@ -206,6 +206,7 @@ export class EligibilityEngine {
       message += `${emoji} *${index + 1}. ${scheme.name}*\n`;
       message += `📊 Match: ${matched.matchScore}%\n`;
       message += `📝 ${this.capitalizeFirst(categoryStr)}\n`;
+      message += `📝 ${this.capitalizeFirst(categoryStr)}\n`;
 
       // Show top 3 match reasons
       if (matched.matchReasons.length > 0) {
