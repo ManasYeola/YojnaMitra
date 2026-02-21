@@ -15,7 +15,7 @@ const userSchema = new Schema<IUser>(
       required: false,
       unique: true,
       sparse: true,
-      match: [/^[0-9]{10}$/, 'Please enter a valid 10-digit phone number'],
+      match: [/^[0-9]{10,12}$/, 'Please enter a valid phone number'],
     },
     email: {
       type: String,

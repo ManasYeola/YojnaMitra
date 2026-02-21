@@ -32,6 +32,10 @@ const app: Application = express();
 connectDB();
 connectSchemesDb();
 
+// Trust proxy — required when running behind ngrok / reverse proxy
+// Allows express-rate-limit to correctly identify client IPs
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet());
 

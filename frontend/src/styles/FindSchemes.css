@@ -18,20 +18,29 @@
 }
 
 .back-button {
-  background: none;
-  border: none;
-  color: #1e5a3e;
-  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1.5px solid #d1d5db;
+  color: #2D5A27;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  padding: 0;
-  transition: all 0.3s ease;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
   white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+  line-height: 1.2;
 }
 
 .back-button:hover {
-  transform: translateX(-4px);
-  color: #164430;
+  background: #f0f7ec;
+  border-color: #2D5A27;
+  color: #1a3d18;
+  transform: translateX(-2px);
+  box-shadow: 0 2px 8px rgba(45,90,39,0.15);
 }
 
 .header-content {
@@ -292,7 +301,8 @@
   }
 
   .back-button {
-    padding-bottom: 0.5rem;
+    font-size: 0.82rem;
+    padding: 0.4rem 0.85rem;
   }
 
   .schemes-container-main {

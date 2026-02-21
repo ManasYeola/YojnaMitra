@@ -167,7 +167,7 @@ export const createSession = async (req: Request, res: Response): Promise<void> 
     res.status(201).json({
       success:      true,
       token,
-      sessionUrl:   `${frontendUrl}/session/${token}`,
+      sessionUrl:   `${frontendUrl}?token=${token}`,
       fetchUrl:     `/api/session/${token}`,
       matchedCount: eligibleSchemeIds.length,
       expiresAt:    expiresAt.toISOString(),

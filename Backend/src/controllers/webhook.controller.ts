@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import crypto from 'crypto';
 import User from '../models/User';
 import UserSession from '../models/UserSession';
-import WhatsappSession, { SessionState } from '../models/WhatsappSession';
+import WhatsappSession, { SessionState } from '../models/WhatsAppSession';
 import { sendWhatsAppMessage } from '../services/whatsapp.service';
 import { matchSchemes, UserProfile } from '../services/matchingEngine';
 
@@ -100,8 +100,13 @@ const MSG = {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function extractPhone(from: string): string {
-  // Twilio sends "whatsapp:+919876543210" — strip prefix and +
-  return from.replace('whatsapp:+', '').replace('whatsapp:', '').replace('+', '');
+  // Twilio sends "whatsapp:+919876543210" — strip prefix and country code
+  let phone = from.replace('whatsapp:+', '').replace('whatsapp:', '').replace('+', '');
+  // Strip Indian country code (91) if present and number is 12 digits
+  if (phone.startsWith('91') && phone.length === 12) {
+    phone = phone.slice(2);
+  }
+  return phone;
 }
 
 /**
@@ -137,7 +142,7 @@ async function createSessionLink(
     expiresAt,
   });
 
-  return `${FRONTEND_URL}/session/${token}`;
+  return `${FRONTEND_URL}?token=${token}`;
 }
 
 
@@ -187,6 +192,16 @@ export const handleWhatsappWebhook = async (req: Request, res: Response): Promis
 
   } catch (err) {
     console.error('Webhook error:', err);
+    // Try to notify the user so they’re not left with silence
+    try {
+      const phone = extractPhone(req.body.From || '');
+      if (phone) {
+        await sendWhatsAppMessage(
+          phone,
+          `⚠️ Something went wrong. Please type *hi* to start again.`
+        );
+      }
+    } catch (_) { /* ignore send failure */ }
   }
 };
 
@@ -227,6 +242,7 @@ async function handleState(
       }
       session.answers = { ...session.answers, name };
       session.state   = 'q1_state';
+      session.markModified('answers');
       await session.save();
       await sendWhatsAppMessage(phone, MSG.q1());
       break;
@@ -240,6 +256,7 @@ async function handleState(
       }
       session.answers = { ...session.answers, state: stateName };
       session.state   = 'q2_farmer_type';
+      session.markModified('answers');
       await session.save();
       await sendWhatsAppMessage(phone, MSG.q2());
       break;
@@ -253,6 +270,7 @@ async function handleState(
       }
       session.answers = { ...session.answers, farmerType: val };
       session.state   = 'q3_land';
+      session.markModified('answers');
       await session.save();
       await sendWhatsAppMessage(phone, MSG.q3());
       break;
@@ -266,6 +284,7 @@ async function handleState(
       }
       session.answers = { ...session.answers, landOwnership: val };
       session.state   = 'q4_age';
+      session.markModified('answers');
       await session.save();
       await sendWhatsAppMessage(phone, MSG.q4());
       break;
@@ -279,6 +298,7 @@ async function handleState(
       }
       session.answers = { ...session.answers, ageRange: val };
       session.state   = 'q5_caste';
+      session.markModified('answers');
       await session.save();
       await sendWhatsAppMessage(phone, MSG.q5());
       break;
@@ -292,6 +312,7 @@ async function handleState(
       }
       session.answers = { ...session.answers, caste: val };
       session.state   = 'q6_income';
+      session.markModified('answers');
       await session.save();
       await sendWhatsAppMessage(phone, MSG.q6());
       break;
@@ -305,6 +326,7 @@ async function handleState(
       }
       session.answers = { ...session.answers, incomeRange: val };
       session.state   = 'q7_bpl';
+      session.markModified('answers');
       await session.save();
       await sendWhatsAppMessage(phone, MSG.q7());
       break;
@@ -317,6 +339,7 @@ async function handleState(
       }
       session.answers = { ...session.answers, isBPL: text === '1' };
       session.state   = 'q8_special';
+      session.markModified('answers');
       await session.save();
       await sendWhatsAppMessage(phone, MSG.q8());
       break;
@@ -350,20 +373,33 @@ async function handleState(
         isPhoneVerified: true,
       };
 
-      const user = await User.findOneAndUpdate(
-        { phone },
-        { $set: profileData },
-        { upsert: true, new: true, runValidators: true }
-      );
+      try {
+        const user = await User.findOneAndUpdate(
+          { phone },
+          { $set: profileData },
+          { upsert: true, new: true, runValidators: true }
+        );
 
-      // Run matching engine + create session link
-      const link = await createSessionLink(user!, 'all');
+        // Run matching engine + create session link
+        const link = await createSessionLink(user!, 'all');
 
-      session.state  = 'complete';
-      session.userId = user!._id.toString();
-      await session.save();
+        session.state  = 'complete';
+        session.userId = user!._id.toString();
+        await session.save();
 
-      await sendWhatsAppMessage(phone, MSG.profileSaved(a.name!, link));
+        await sendWhatsAppMessage(phone, MSG.profileSaved(a.name!, link));
+      } catch (saveErr) {
+        console.error('Failed to save user profile:', saveErr);
+        // Reset session so user can try again
+        session.state   = 'ask_name';
+        session.answers = {};
+        session.markModified('answers');
+        await session.save();
+        await sendWhatsAppMessage(
+          phone,
+          `❌ Something went wrong saving your profile. Let's start over.\n\nWhat is your *full name*?`
+        );
+      }
       break;
     }
 
@@ -375,6 +411,7 @@ async function handleState(
         // Profile somehow missing — restart
         session.state   = 'ask_name';
         session.answers = {};
+        session.markModified('answers');
         await session.save();
         await sendWhatsAppMessage(phone, MSG.newUser());
         return;
@@ -385,6 +422,7 @@ async function handleState(
           // Update profile — restart onboarding
           session.state   = 'ask_name';
           session.answers = {};
+          session.markModified('answers');
           await session.save();
           await sendWhatsAppMessage(phone, MSG.profileReset());
           break;

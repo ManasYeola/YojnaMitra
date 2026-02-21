@@ -161,24 +161,6 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
             {step === 'register' && (
               <form onSubmit={handleSendOTP} className="auth-form">
 
-                {/* Auth Method Toggle */}
-                <div className="auth-method-toggle">
-                  <button
-                    type="button"
-                    className={`toggle-btn ${authMethod === 'email' ? 'active' : ''}`}
-                    onClick={() => setAuthMethod('email')}
-                  >
-                    Email
-                  </button>
-                  <button
-                    type="button"
-                    className={`toggle-btn ${authMethod === 'phone' ? 'active' : ''}`}
-                    onClick={() => setAuthMethod('phone')}
-                  >
-                    Phone
-                  </button>
-                </div>
-
                 {/* Full Name */}
                 <div className="input-group">
                   <label htmlFor="name">Full Name *</label>
@@ -188,13 +170,13 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    placeholder="John Doe"
+                    placeholder="Enter your full name"
                     required
                     disabled={loading}
                   />
                 </div>
 
-                {/* Email or Phone */}
+                {/* Email / Phone */}
                 {authMethod === 'email' ? (
                   <div className="input-group">
                     <label htmlFor="email">Email *</label>
@@ -203,7 +185,7 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                       id="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="johndoe@xyz.com"
+                      placeholder="johndoe@example.com"
                       required
                       disabled={loading}
                     />
@@ -216,7 +198,7 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                       id="phone"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="Enter 10-digit number"
+                      placeholder="10-digit mobile number"
                       pattern="[0-9]{10}"
                       required
                       disabled={loading}
@@ -233,14 +215,14 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                     name="state"
                     value={formData.state}
                     onChange={handleInputChange}
-                    placeholder="Maharashtra"
+                    placeholder="e.g. Maharashtra"
                     required
                     disabled={loading}
                   />
                 </div>
 
                 {/* Farmer Type */}
-                <div className="form-group">
+                <div className="input-group">
                   <label htmlFor="farmerType">I am a... *</label>
                   <select
                     id="farmerType"
@@ -261,7 +243,7 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                 </div>
 
                 {/* Land Ownership */}
-                <div className="form-group">
+                <div className="input-group">
                   <label htmlFor="landOwnership">Land Ownership *</label>
                   <select
                     id="landOwnership"
@@ -279,7 +261,7 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                 </div>
 
                 {/* Age Range */}
-                <div className="form-group">
+                <div className="input-group">
                   <label htmlFor="ageRange">Age Group *</label>
                   <select
                     id="ageRange"
@@ -298,7 +280,7 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                 </div>
 
                 {/* Caste */}
-                <div className="form-group">
+                <div className="input-group">
                   <label htmlFor="caste">Caste Category</label>
                   <select
                     id="caste"
@@ -315,8 +297,8 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                   </select>
                 </div>
 
-                {/* Annual Income */}
-                <div className="form-group">
+                {/* Income Range */}
+                <div className="input-group">
                   <label htmlFor="incomeRange">Annual Income *</label>
                   <select
                     id="incomeRange"
@@ -335,7 +317,7 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                 </div>
 
                 {/* BPL */}
-                <div className="form-group">
+                <div className="input-group">
                   <label htmlFor="isBPL">BPL Card Holder *</label>
                   <select
                     id="isBPL"
@@ -349,6 +331,24 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                     <option value="true">✅ Yes</option>
                     <option value="false">❌ No</option>
                   </select>
+                </div>
+
+                {/* Auth Method Toggle */}
+                <div className="auth-method-toggle">
+                  <button
+                    type="button"
+                    className={`toggle-btn ${authMethod === 'email' ? 'active' : ''}`}
+                    onClick={() => setAuthMethod('email')}
+                  >
+                    Email
+                  </button>
+                  <button
+                    type="button"
+                    className={`toggle-btn ${authMethod === 'phone' ? 'active' : ''}`}
+                    onClick={() => setAuthMethod('phone')}
+                  >
+                    Phone
+                  </button>
                 </div>
 
                 <button type="submit" className="submit-button" disabled={loading}>

@@ -28,13 +28,11 @@ export interface UserProfile {
   name?: string;
   state?: string;
   district?: string;
-  farmerType?: 'crop_farmer' | 'dairy' | 'fisherman' | 'labourer' | 'entrepreneur' | 'other';
-  landOwnership?: 'owned' | 'none' | 'leased';
-  ageRange?: 'below_18' | '18_40' | '41_60' | 'above_60';
-  caste?: 'general' | 'sc' | 'st' | 'obc' | 'not_disclosed';
-  incomeRange?: 'below_1L' | '1_3L' | '3_8L' | 'above_8L';
-  isBPL?: boolean;
-  specialCategory?: string[];
+  landSize?: number;
+  cropType?: string;
+  farmerCategory?: 'small' | 'marginal' | 'large';
+  age?: number;
+  incomeRange?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -43,13 +41,11 @@ export interface UpdateProfileRequest {
   name?: string;
   state?: string;
   district?: string;
-  farmerType?: 'crop_farmer' | 'dairy' | 'fisherman' | 'labourer' | 'entrepreneur' | 'other';
-  landOwnership?: 'owned' | 'none' | 'leased';
-  ageRange?: 'below_18' | '18_40' | '41_60' | 'above_60';
-  caste?: 'general' | 'sc' | 'st' | 'obc' | 'not_disclosed';
-  incomeRange?: 'below_1L' | '1_3L' | '3_8L' | 'above_8L';
-  isBPL?: boolean;
-  specialCategory?: string[];
+  landSize?: number;
+  cropType?: string;
+  farmerCategory?: 'small' | 'marginal' | 'large';
+  age?: number;
+  incomeRange?: string;
 }
 
 export interface AuthResponse {
@@ -174,6 +170,11 @@ export const authService = {
   getCurrentUser: (): UserProfile | null => {
     const userStr = localStorage.getItem('user');
     return userStr ? JSON.parse(userStr) : null;
+  },
+
+  // Get auth token from localStorage
+  getToken: (): string | null => {
+    return localStorage.getItem('authToken');
   },
 };
 
