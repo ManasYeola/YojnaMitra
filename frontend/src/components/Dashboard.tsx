@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Farmer, Scheme, Application } from '../types';
-import SchemeCard from './SchemeCard';
+import type { Farmer, Application } from '../types';
 import schemeService from '../services/scheme.service';
 import authService from '../services/auth.service';
 
@@ -49,8 +48,8 @@ export default function Dashboard({ farmer, onLogout, onFindSchemes }: Dashboard
   // Filter criteria state
   const [filters, setFilters] = useState<FilterCriteria>({
     state: farmer.state,
-    landSize: farmer.landSize,
-    cropType: farmer.cropType,
+    landSize: farmer.landSize ?? 0,
+    cropType: farmer.cropType ?? '',
     farmerCategory: farmer.farmerCategory || 'small',
     minScore: 50,
   });
@@ -326,8 +325,8 @@ export default function Dashboard({ farmer, onLogout, onFindSchemes }: Dashboard
                   onClick={() => {
                     setFilters({
                       state: farmer.state,
-                      landSize: farmer.landSize,
-                      cropType: farmer.cropType,
+                      landSize: farmer.landSize ?? 0,
+                      cropType: farmer.cropType ?? '',
                       farmerCategory: farmer.farmerCategory || 'small',
                       minScore: 50,
                     });
