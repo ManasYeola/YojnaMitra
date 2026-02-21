@@ -2,8 +2,8 @@ import express, { Application, Request, Response } from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
 import cors from 'cors';
-// Load .env from the same directory as this file (Backend/src/.env)
-dotenv.config({ path: path.join(__dirname, '.env') });
+// Load .env from the Backend root directory
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
