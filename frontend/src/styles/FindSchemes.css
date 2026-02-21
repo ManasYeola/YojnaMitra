@@ -1,0 +1,333 @@
+/* Find Schemes Page Styles */
+.find-schemes-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e8f0ed 0%, #c5d4b5 100%);
+  position: relative;
+}
+
+.find-schemes-header {
+  background: white;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: #1e5a3e;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.back-button:hover {
+  transform: translateX(-4px);
+  color: #164430;
+}
+
+.header-content {
+  flex: 1;
+}
+
+.header-content h1 {
+  margin: 0;
+  color: #1e5a3e;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+/* Main Container */
+.schemes-container-main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+/* Loading State */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  gap: 1.5rem;
+}
+
+.loader {
+  width: 56px;
+  height: 56px;
+  border: 5px solid #f3f4f6;
+  border-top-color: #5a8f6d;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-state p {
+  color: #1e5a3e;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.empty-state h3 {
+  color: #1e5a3e;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  color: #5a8f6d;
+  font-size: 1.1rem;
+}
+
+/* Schemes Grid */
+.schemes-grid-main {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 2rem;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scheme Card */
+.scheme-card-main {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(30, 90, 62, 0.08);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.scheme-card-main::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #5a8f6d 0%, #1e5a3e 100%);
+}
+
+.scheme-card-main:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(30, 90, 62, 0.15);
+  border-color: #5a8f6d;
+}
+
+/* Card Header */
+.scheme-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.scheme-title {
+  color: #1e5a3e;
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.scheme-level-badge {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  background: linear-gradient(135deg, #5a8f6d 0%, #3a6f4d 100%);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  width: fit-content;
+  text-transform: capitalize;
+}
+
+/* Categories */
+.scheme-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.category-badge {
+  padding: 0.4rem 0.9rem;
+  background: #e8f0ed;
+  color: #1e5a3e;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid #c5d4b5;
+}
+
+/* Description */
+.scheme-description {
+  color: #4a5568;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0.5rem 0;
+  flex-grow: 1;
+}
+
+/* Benefit Section */
+.scheme-benefit {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #e8f0ed 0%, #d4e5cb 100%);
+  border-radius: 12px;
+  border-left: 4px solid #5a8f6d;
+}
+
+.benefit-label {
+  color: #1e5a3e;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.benefit-value {
+  color: #3a6f4d;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* State Section */
+.scheme-state {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border-radius: 10px;
+}
+
+.state-label {
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.state-value {
+  color: #2d3748;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* View Details Button */
+.btn-view-details {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #5a8f6d 0%, #1e5a3e 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(90, 143, 109, 0.3);
+}
+
+.btn-view-details:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(90, 143, 109, 0.4);
+  background: linear-gradient(135deg, #3a6f4d 0%, #164430 100%);
+}
+
+.btn-view-details:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .schemes-grid-main {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .find-schemes-header {
+    padding: 1rem 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .back-button {
+    padding-bottom: 0.5rem;
+  }
+
+  .schemes-container-main {
+    padding: 2rem 1rem;
+  }
+
+  .schemes-grid-main {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .scheme-card-main {
+    padding: 1.5rem;
+  }
+
+  .scheme-title {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content h1 {
+    font-size: 1.5rem;
+  }
+
+  .scheme-card-main {
+    padding: 1.25rem;
+  }
+
+  .scheme-title {
+    font-size: 1.1rem;
+  }
+
+  .btn-view-details {
+    padding: 0.875rem;
+    font-size: 0.95rem;
+  }
+}

@@ -6,6 +6,9 @@ import {
   createScheme,
   updateScheme,
   deleteScheme,
+  checkSchemeEligibility,
+  getEligibleSchemesForUser,
+  checkEligibilityBatch,
 } from '../controllers/scheme.controller';
 import { authenticateToken } from '../middleware/auth.middleware';
 import { body } from 'express-validator';
@@ -15,6 +18,13 @@ const router = Router();
 
 // Public routes
 router.get('/', getAllSchemes);
+
+// Eligibility routes (specific routes before /:id)
+router.get('/eligible', authenticateToken, getEligibleSchemesForUser);
+router.post('/check-eligibility-batch', checkEligibilityBatch);
+router.post('/:id/check-eligibility', checkSchemeEligibility);
+
+// Regular scheme routes
 router.get('/:id', getSchemeById);
 
 // Protected routes

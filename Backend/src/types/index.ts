@@ -23,11 +23,31 @@ export interface IUser extends Document {
 export type SchemeCategory = 'insurance' | 'subsidy' | 'loan' | 'training' | 'equipment';
 
 export interface IScheme extends Document {
+  _id: string; // Slug-based ID from sync-service
+  slug?: string;
+  apiId?: string;
   name: string;
-  category: SchemeCategory;
-  description: string;
-  benefits: string[];
-  eligibility: {
+  level?: string; // "Central" | "State"
+  state?: string;
+  category?: any[]; // Mixed type from API
+  tags?: any[];
+  
+  // Legacy fields (backward compatible)
+  description?: string;
+  benefits?: string[];
+  
+  // Rich markdown content from sync-service
+  description_md?: string;
+  benefits_md?: string;
+  eligibility_md?: string;
+  exclusions_md?: string;
+  applicationProcess_md?: string;
+  documentsRequired_md?: string;
+  
+  // Raw API data
+  basicDetails?: any;
+  
+  eligibility?: {
     states?: string[];
     occupationType?: string[];
     landOwnership?: string[];
@@ -41,12 +61,48 @@ export interface IScheme extends Document {
     maxLandSize?: number;
     minLandSize?: number;
   };
-  documents: string[];
+  documents?: any[]; // Can be string[] or object[]
+  faqs?: any[];
   applyUrl?: string;
   amount?: string;
+  
+  // Sync metadata
+  lastSyncedAt?: Date;
+  sourceVersion?: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
+}
+
+// Eligibility Check Types
+export interface IEligibilityCheck {
+  isEligible: boolean;
+  matchScore: number;
+  matchedCriteria: string[];
+  unmatchedCriteria: string[];
+  warnings: string[];
+  parsedEligibility?: {
+    states?: string[];
+    crops?: string[];
+    categories?: string[];
+    ageRange?: { min?: number; max?: number };
+    landSize?: { min?: number; max?: number };
+    income?: { min?: number; max?: number };
+    other?: string[];
+  };
+}
+
+export interface IEligibilityRequest {
+  schemeId: string;
+  userData?: {
+    state?: string;
+    district?: string;
+    landSize?: number;
+    cropType?: string;
+    farmerCategory?: string;
+    age?: number;
+    incomeRange?: string;
+  };
 }
 
 // Application Types
