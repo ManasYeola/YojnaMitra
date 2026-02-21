@@ -1,35 +1,21 @@
 import { useState, useEffect } from 'react';
 import '../styles/PersonalizedDashboard.css';
 
-interface EligibleScheme {
-  scheme: {
-    _id: string;
-    name: string;
-    category: any[];
-    level: string;
-    state: string | null;
-    description: string;
-    description_md?: string;
-    amount: string;
-    applyUrl: string;
-  };
-  eligibility: {
-    isEligible: boolean;
-    matchScore: number;
-    matchedCriteria: string[];
-    unmatchedCriteria: string[];
-    warnings: string[];
-  };
-}
-
-interface UserProfile {
+interface Scheme {
+  _id: string;
   name: string;
-  phone?: string;
-  state: string;
-  district: string;
-  landSize: number;
-  cropType: string;
-  farmerCategory: string;
+  category?: any[];
+  level?: string;
+  state?: string | null;
+  description?: string;
+  description_md?: string;
+  benefits_md?: string;
+  eligibility_md?: string;
+  applicationProcess_md?: string;
+  documentsRequired_md?: string;
+  amount?: string;
+  applyUrl?: string;
+  basicDetails?: any;
 }
 
 export default function PersonalizedDashboard() {
@@ -37,8 +23,7 @@ export default function PersonalizedDashboard() {
   const token = urlParams.get('token');
   
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [schemes, setSchemes] = useState<EligibleScheme[]>([]);
+  const [schemes, setSchemes] = useState<Scheme[]>([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -53,20 +38,13 @@ export default function PersonalizedDashboard() {
   const fetchEligibleSchemes = async (token: string) => {
     try {
       setLoading(true);
-      // TODO: Replace with actual API endpoint that uses token
       const response = await fetch(
-        `http://localhost:5000/api/schemes/eligible?token=${token}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        }
+        `http://localhost:5000/api/session/${token}`
       );
 
       const data = await response.json();
       if (data.success) {
-        setUser(data.data.user || null);
-        setSchemes(data.data.schemes || []);
+        setSchemes(data.schemes || []);
       } else {
         setError(data.message || 'Failed to load schemes');
       }
@@ -76,19 +54,6 @@ export default function PersonalizedDashboard() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleViewDetails = (applyUrl: string) => {
-    if (applyUrl) {
-      window.open(applyUrl, '_blank', 'noopener,noreferrer');
-    }
-  };
-
-  const getMatchScoreColor = (score: number) => {
-    if (score >= 80) return '#10b981'; // Green
-    if (score >= 60) return '#3b82f6'; // Blue
-    if (score >= 40) return '#f59e0b'; // Orange
-    return '#ef4444'; // Red
   };
 
   if (error) {
@@ -111,14 +76,10 @@ export default function PersonalizedDashboard() {
           <img src="/logo.png" alt="Yojna Mitra" className="logo-img" />
           <h1 className="logo-text">Yojna Mitra</h1>
         </div>
-        {user && (
-          <div className="user-info">
-            <h2>Welcome, {user.name}!</h2>
-            <p className="user-details">
-              {user.district}, {user.state} • {user.cropType} • {user.landSize} acres
-            </p>
-          </div>
-        )}
+        <div className="user-info">
+          <h2>Your Eligible Schemes</h2>
+          <p className="user-details">Personalized based on your profile</p>
+        </div>
       </header>
 
       <div className="dashboard-container">
@@ -137,12 +98,8 @@ export default function PersonalizedDashboard() {
             </div>
 
             <div className="schemes-grid">
-              {schemes.map(({ scheme, eligibility }) => (
+              {schemes.map((scheme) => (
                 <div key={scheme._id} className="scheme-card">
-                  <div className="match-score-badge" style={{ backgroundColor: getMatchScoreColor(eligibility.matchScore) }}>
-                    {eligibility.matchScore}% Match
-                  </div>
-
                   <div className="scheme-header">
                     <h3 className="scheme-name">{scheme.name}</h3>
                     {scheme.level && (
@@ -161,10 +118,8 @@ export default function PersonalizedDashboard() {
                   )}
 
                   <p className="scheme-desc">
-                    {scheme.description?.substring(0, 150) ||
-                     scheme.description_md?.substring(0, 150) ||
-                     'Government welfare scheme'}
-                    {((scheme.description?.length ?? 0) > 150 || (scheme.description_md?.length ?? 0) > 150) && '...'}
+                    {(scheme.description_md || scheme.description || 'Government welfare scheme').substring(0, 150)}
+                    {((scheme.description_md?.length ?? 0) > 150 || (scheme.description?.length ?? 0) > 150) && '...'}
                   </p>
 
                   {scheme.amount && (
@@ -174,35 +129,9 @@ export default function PersonalizedDashboard() {
                     </div>
                   )}
 
-                  {eligibility.matchedCriteria.length > 0 && (
-                    <div className="eligibility-info">
-                      <h4>✓ Why You Qualify:</h4>
-                      <ul className="criteria-list">
-                        {eligibility.matchedCriteria.slice(0, 3).map((criteria, idx) => (
-                          <li key={idx} className="matched-criteria">
-                            {criteria}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {eligibility.unmatchedCriteria.length > 0 && (
-                    <details className="limitations">
-                      <summary>⚠️ Limitations ({eligibility.unmatchedCriteria.length})</summary>
-                      <ul className="criteria-list">
-                        {eligibility.unmatchedCriteria.map((criteria, idx) => (
-                          <li key={idx} className="unmatched-criteria">
-                            {criteria}
-                          </li>
-                        ))}
-                      </ul>
-                    </details>
-                  )}
-
                   <button
                     className="btn-apply"
-                    onClick={() => handleViewDetails(scheme.applyUrl)}
+                    onClick={() => scheme.applyUrl && window.open(scheme.applyUrl, '_blank', 'noopener,noreferrer')}
                     disabled={!scheme.applyUrl}
                   >
                     Apply Now →

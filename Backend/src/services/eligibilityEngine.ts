@@ -198,11 +198,14 @@ export class EligibilityEngine {
 
     matchedSchemes.forEach((matched, index) => {
       const scheme = matched.scheme;
-      const emoji = this.getCategoryEmoji(scheme.category);
+      const categoryStr = Array.isArray(scheme.category)
+        ? (scheme.category[0] ?? '')
+        : (scheme.category ?? '');
+      const emoji = this.getCategoryEmoji(categoryStr);
 
       message += `${emoji} *${index + 1}. ${scheme.name}*\n`;
       message += `📊 Match: ${matched.matchScore}%\n`;
-      message += `📝 ${this.capitalizeFirst(scheme.category)}\n`;
+      message += `📝 ${this.capitalizeFirst(categoryStr)}\n`;
 
       // Show top 3 match reasons
       if (matched.matchReasons.length > 0) {

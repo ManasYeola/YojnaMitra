@@ -18,13 +18,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Check if this is a personalized dashboard link (token in URL)
-  const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get('token');
-
-  // If token exists, show PersonalizedDashboard
-  if (token) {
-    return <PersonalizedDashboard />;
-  }
+  const token = new URLSearchParams(window.location.search).get('token');
 
   // Check if user is already authenticated on mount (but don't auto-redirect)
   useEffect(() => {
@@ -121,6 +115,11 @@ function App() {
   const handleBackToDashboard = () => {
     setCurrentView('dashboard');
   };
+
+  // If token exists, show PersonalizedDashboard (must be after all hooks)
+  if (token) {
+    return <PersonalizedDashboard />;
+  }
 
   // Render based on current view
   if (currentView === 'landing') {

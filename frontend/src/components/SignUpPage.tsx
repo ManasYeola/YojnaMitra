@@ -160,61 +160,45 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
             {/* Registration Form - Step 1 */}
             {step === 'register' && (
               <form onSubmit={handleSendOTP} className="auth-form">
-                {/* Name Fields */}
-                <div className="form-row-2">
-                  <div className="input-group">
-                    <label htmlFor="name">Full Name</label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="John Doe"
-                      required
-                      disabled={loading}
-                    />
-                  </div>
 
-                  <div className="input-group">
-                    <label htmlFor="age">Age</label>
-                    <input
-                      type="number"
-                      id="age"
-                      name="age"
-                      value={formData.age}
-                      onChange={handleInputChange}
-                      placeholder="25"
-                      min="18"
-                      max="120"
-                      disabled={loading}
-                    />
-                  </div>
+                {/* Full Name */}
+                <div className="input-group">
+                  <label htmlFor="name">Full Name *</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    placeholder="Enter your full name"
+                    required
+                    disabled={loading}
+                  />
                 </div>
 
-                {/* Email/Phone */}
+                {/* Email / Phone */}
                 {authMethod === 'email' ? (
                   <div className="input-group">
-                    <label htmlFor="email">Email</label>
+                    <label htmlFor="email">Email *</label>
                     <input
                       type="email"
                       id="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="johndoe@xyz.com"
+                      placeholder="johndoe@example.com"
                       required
                       disabled={loading}
                     />
                   </div>
                 ) : (
                   <div className="input-group">
-                    <label htmlFor="phone">Phone Number</label>
+                    <label htmlFor="phone">Phone Number *</label>
                     <input
                       type="tel"
                       id="phone"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="Enter 10-digit number"
+                      placeholder="10-digit mobile number"
                       pattern="[0-9]{10}"
                       required
                       disabled={loading}
@@ -222,37 +206,23 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                   </div>
                 )}
 
-                {/* State and District */}
-                <div className="form-row-2">
-                  <div className="input-group">
-                    <label htmlFor="state">State</label>
-                    <input
-                      type="text"
-                      id="state"
-                      name="state"
-                      value={formData.state}
-                      onChange={handleInputChange}
-                      placeholder="Maharashtra"
-                      required
-                      disabled={loading}
-                    />
-                  </div>
-
-                  <div className="input-group">
-                    <label htmlFor="district">District</label>
-                    <input
-                      type="text"
-                      id="district"
-                      name="district"
-                      value={formData.district}
-                      onChange={handleInputChange}
-                      placeholder="Pune"
-                      required
-                      disabled={loading}
-                    />
-                  </div>
+                {/* State */}
+                <div className="input-group">
+                  <label htmlFor="state">State *</label>
+                  <input
+                    type="text"
+                    id="state"
+                    name="state"
+                    value={formData.state}
+                    onChange={handleInputChange}
+                    placeholder="e.g. Maharashtra"
+                    required
+                    disabled={loading}
+                  />
                 </div>
-                <div className="form-group">
+
+                {/* Farmer Type */}
+                <div className="input-group">
                   <label htmlFor="farmerType">I am a... *</label>
                   <select
                     id="farmerType"
@@ -271,27 +241,9 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                     <option value="other">👤 Other</option>
                   </select>
                 </div>
-              </div>
 
-                {/* Land Size and Category */}
-                <div className="form-row-2">
-                  <div className="input-group">
-                    <label htmlFor="landSize">Land Size (acres)</label>
-                    <input
-                      type="number"
-                      id="landSize"
-                      name="landSize"
-                      value={formData.landSize}
-                      onChange={handleInputChange}
-                      placeholder="5.5"
-                      step="0.01"
-                      min="0"
-                      required
-                      disabled={loading}
-                    />
-                  </div>
-              <div className="form-row">
-                <div className="form-group">
+                {/* Land Ownership */}
+                <div className="input-group">
                   <label htmlFor="landOwnership">Land Ownership *</label>
                   <select
                     id="landOwnership"
@@ -308,23 +260,8 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                   </select>
                 </div>
 
-                  <div className="input-group">
-                    <label htmlFor="farmerCategory">Farmer Category</label>
-                    <select
-                      id="farmerCategory"
-                      name="farmerCategory"
-                      value={formData.farmerCategory}
-                      onChange={handleInputChange}
-                      required
-                      disabled={loading}
-                    >
-                      <option value="small">Small</option>
-                      <option value="marginal">Marginal</option>
-                      <option value="large">Large</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="form-group">
+                {/* Age Range */}
+                <div className="input-group">
                   <label htmlFor="ageRange">Age Group *</label>
                   <select
                     id="ageRange"
@@ -341,25 +278,9 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                     <option value="above_60">Above 60</option>
                   </select>
                 </div>
-              </div>
 
-                {/* Crop Type and Income */}
-                <div className="form-row-2">
-                  <div className="input-group">
-                    <label htmlFor="cropType">Crop Type</label>
-                    <input
-                      type="text"
-                      id="cropType"
-                      name="cropType"
-                      value={formData.cropType}
-                      onChange={handleInputChange}
-                      placeholder="Rice, Wheat"
-                      required
-                      disabled={loading}
-                    />
-                  </div>
-              <div className="form-row">
-                <div className="form-group">
+                {/* Caste */}
+                <div className="input-group">
                   <label htmlFor="caste">Caste Category</label>
                   <select
                     id="caste"
@@ -376,20 +297,8 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                   </select>
                 </div>
 
-                  <div className="input-group">
-                    <label htmlFor="incomeRange">Income Range</label>
-                    <input
-                      type="text"
-                      id="incomeRange"
-                      name="incomeRange"
-                      value={formData.incomeRange}
-                      onChange={handleInputChange}
-                      placeholder="Optional"
-                      disabled={loading}
-                    />
-                  </div>
-                </div>
-                <div className="form-group">
+                {/* Income Range */}
+                <div className="input-group">
                   <label htmlFor="incomeRange">Annual Income *</label>
                   <select
                     id="incomeRange"
@@ -406,10 +315,9 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                     <option value="above_8L">Above ₹8 Lakh</option>
                   </select>
                 </div>
-              </div>
 
-              <div className="form-row">
-                <div className="form-group">
+                {/* BPL */}
+                <div className="input-group">
                   <label htmlFor="isBPL">BPL Card Holder *</label>
                   <select
                     id="isBPL"
@@ -424,11 +332,6 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                     <option value="false">❌ No</option>
                   </select>
                 </div>
-              </div>
-
-                <button type="submit" className="submit-button" disabled={loading}>
-                  {loading ? 'Sending OTP...' : 'Sign Up'}
-                </button>
 
                 {/* Auth Method Toggle */}
                 <div className="auth-method-toggle">
@@ -447,6 +350,10 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                     Phone
                   </button>
                 </div>
+
+                <button type="submit" className="submit-button" disabled={loading}>
+                  {loading ? 'Sending OTP...' : 'Sign Up'}
+                </button>
               </form>
             )}
 
