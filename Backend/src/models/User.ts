@@ -33,23 +33,19 @@ const userSchema = new Schema<IUser>(
     },
     district: {
       type: String,
-      required: [true, 'District is required'],
       trim: true,
     },
     landSize: {
       type: Number,
-      required: [true, 'Land size is required'],
       min: [0, 'Land size cannot be negative'],
     },
     cropType: {
       type: String,
-      required: [true, 'Crop type is required'],
       trim: true,
       lowercase: true,
     },
     farmerCategory: {
       type: String,
-      required: [true, 'Farmer category is required'],
       enum: {
         values: ['small', 'marginal', 'large'],
         message: 'Farmer category must be small, marginal, or large',
@@ -62,7 +58,45 @@ const userSchema = new Schema<IUser>(
     },
     incomeRange: {
       type: String,
-      trim: true,
+      enum: {
+        values: ['below_1L', '1_3L', '3_8L', 'above_8L'],
+        message: 'Invalid income range',
+      },
+    },
+    farmerType: {
+      type: String,
+      enum: {
+        values: ['crop_farmer', 'dairy', 'fisherman', 'labourer', 'entrepreneur', 'other'],
+        message: 'Invalid farmer type',
+      },
+    },
+    landOwnership: {
+      type: String,
+      enum: {
+        values: ['owned', 'none', 'leased'],
+        message: 'Invalid land ownership value',
+      },
+    },
+    ageRange: {
+      type: String,
+      enum: {
+        values: ['below_18', '18_40', '41_60', 'above_60'],
+        message: 'Invalid age range',
+      },
+    },
+    caste: {
+      type: String,
+      enum: {
+        values: ['general', 'sc', 'st', 'obc', 'not_disclosed'],
+        message: 'Invalid caste category',
+      },
+    },
+    isBPL: {
+      type: Boolean,
+    },
+    specialCategory: {
+      type: [String],
+      default: [],
     },
     isPhoneVerified: {
       type: Boolean,

@@ -118,7 +118,7 @@ const transformScheme = (rawScheme, slug) => {
     // ── Sync metadata ─────────────────────────────────────────────────
     lastSyncedAt:  new Date(),
     sourceVersion: 'v6',
-    isActive:      true,
+    // isActive is NOT set here — computed from tag matching in syncSchemes.js
   };
 };
 

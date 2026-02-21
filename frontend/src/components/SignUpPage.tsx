@@ -24,12 +24,13 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
   const [formData, setFormData] = useState({
     name: '',
     state: '',
-    district: '',
-    landSize: '',
-    cropType: '',
-    farmerCategory: 'small' as 'small' | 'marginal' | 'large',
-    age: '',
+    farmerType: '',
+    landOwnership: '',
+    ageRange: '',
+    caste: 'not_disclosed',
     incomeRange: '',
+    isBPL: '' as '' | 'true' | 'false',
+    specialCategory: [] as string[],
   });
 
   const handleSendOTP = async (e: React.FormEvent) => {
@@ -51,8 +52,8 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
     }
 
     // Validate required fields
-    if (!formData.name || !formData.state || !formData.district || 
-        !formData.landSize || !formData.cropType) {
+    if (!formData.name || !formData.state || !formData.farmerType ||
+        !formData.landOwnership || !formData.ageRange || !formData.incomeRange || !formData.isBPL) {
       setError('Please fill in all required fields');
       setLoading(false);
       return;
@@ -85,12 +86,13 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
       const userData: any = {
         name: formData.name,
         state: formData.state,
-        district: formData.district,
-        landSize: parseFloat(formData.landSize),
-        cropType: formData.cropType,
-        farmerCategory: formData.farmerCategory,
-        age: formData.age ? parseInt(formData.age) : undefined,
+        farmerType: formData.farmerType || undefined,
+        landOwnership: formData.landOwnership || undefined,
+        ageRange: formData.ageRange || undefined,
+        caste: formData.caste || undefined,
         incomeRange: formData.incomeRange || undefined,
+        isBPL: formData.isBPL !== '' ? formData.isBPL === 'true' : undefined,
+        specialCategory: formData.specialCategory.length > 0 ? formData.specialCategory : [],
       };
       
       // Only include phone if using phone authentication
@@ -112,7 +114,7 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
           const user = response.data.user;
           
           // Check if user already has complete profile
-          if (user.name && user.state && user.district && user.landSize && user.cropType) {
+          if (user.name && user.state && user.farmerType) {
             setError('Account already exists. Please sign in instead.');
             setLoading(false);
             return;
@@ -252,80 +254,115 @@ function SignUpPage({ onAuthSuccess, onBack, onSwitchToSignIn }: SignUpPageProps
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="district">District *</label>
-                  <input
-                    type="text"
-                    id="district"
-                    name="district"
-                    value={formData.district}
-                    onChange={handleInputChange}
-                    placeholder="Enter your district"
-                    required
-                    disabled={loading}
-                  />
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="landSize">Land Size (acres) *</label>
-                  <input
-                    type="number"
-                    id="landSize"
-                    name="landSize"
-                    value={formData.landSize}
-                    onChange={handleInputChange}
-                    placeholder="Enter land size"
-                    step="0.01"
-                    min="0"
-                    required
-                    disabled={loading}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="farmerCategory">Farmer Category *</label>
+                  <label htmlFor="farmerType">I am a... *</label>
                   <select
-                    id="farmerCategory"
-                    name="farmerCategory"
-                    value={formData.farmerCategory}
+                    id="farmerType"
+                    name="farmerType"
+                    value={formData.farmerType}
                     onChange={handleInputChange}
                     required
                     disabled={loading}
                   >
-                    <option value="small">Small</option>
-                    <option value="marginal">Marginal</option>
-                    <option value="large">Large</option>
+                    <option value="">Select type</option>
+                    <option value="crop_farmer">🌾 Farmer (Crop)</option>
+                    <option value="dairy">🐄 Dairy Farmer</option>
+                    <option value="fisherman">🐟 Fisherman</option>
+                    <option value="labourer">👷 Agriculture Labourer</option>
+                    <option value="entrepreneur">🏭 Agri Entrepreneur</option>
+                    <option value="other">👤 Other</option>
                   </select>
                 </div>
               </div>
 
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="cropType">Crop Type *</label>
-                  <input
-                    type="text"
-                    id="cropType"
-                    name="cropType"
-                    value={formData.cropType}
+                  <label htmlFor="landOwnership">Land Ownership *</label>
+                  <select
+                    id="landOwnership"
+                    name="landOwnership"
+                    value={formData.landOwnership}
                     onChange={handleInputChange}
-                    placeholder="e.g., Rice, Wheat, Cotton"
                     required
                     disabled={loading}
-                  />
+                  >
+                    <option value="">Select</option>
+                    <option value="owned">✅ Own Land</option>
+                    <option value="leased">📄 Leased Land</option>
+                    <option value="none">❌ No Land</option>
+                  </select>
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="incomeRange">Income Range</label>
-                  <input
-                    type="text"
+                  <label htmlFor="ageRange">Age Group *</label>
+                  <select
+                    id="ageRange"
+                    name="ageRange"
+                    value={formData.ageRange}
+                    onChange={handleInputChange}
+                    required
+                    disabled={loading}
+                  >
+                    <option value="">Select age group</option>
+                    <option value="below_18">Below 18</option>
+                    <option value="18_40">18 – 40</option>
+                    <option value="41_60">41 – 60</option>
+                    <option value="above_60">Above 60</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="caste">Caste Category</label>
+                  <select
+                    id="caste"
+                    name="caste"
+                    value={formData.caste}
+                    onChange={handleInputChange}
+                    disabled={loading}
+                  >
+                    <option value="not_disclosed">Prefer not to say</option>
+                    <option value="general">General</option>
+                    <option value="sc">SC</option>
+                    <option value="st">ST</option>
+                    <option value="obc">OBC</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="incomeRange">Annual Income *</label>
+                  <select
                     id="incomeRange"
                     name="incomeRange"
                     value={formData.incomeRange}
                     onChange={handleInputChange}
-                    placeholder="Optional"
+                    required
                     disabled={loading}
-                  />
+                  >
+                    <option value="">Select income range</option>
+                    <option value="below_1L">Below ₹1 Lakh</option>
+                    <option value="1_3L">₹1 – 3 Lakh</option>
+                    <option value="3_8L">₹3 – 8 Lakh</option>
+                    <option value="above_8L">Above ₹8 Lakh</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="isBPL">BPL Card Holder *</label>
+                  <select
+                    id="isBPL"
+                    name="isBPL"
+                    value={formData.isBPL}
+                    onChange={handleInputChange}
+                    required
+                    disabled={loading}
+                  >
+                    <option value="">Select</option>
+                    <option value="true">✅ Yes</option>
+                    <option value="false">❌ No</option>
+                  </select>
                 </div>
               </div>
 

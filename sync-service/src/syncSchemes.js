@@ -32,6 +32,7 @@ const { fetchAllSlugs }                    = require('./services/fetchSearch');
 const { fetchSchemeBySlug, transformScheme } = require('./services/fetchScheme');
 const { fetchDocuments }                   = require('./services/fetchDocuments');
 const { fetchFaqs }                        = require('./services/fetchFaqs');
+const { ALL_AGRI_TAGS }                    = require('./config/agricultureTags');
 
 const { delay }     = require('./utils/delay');
 const logger        = require('./utils/logger');
@@ -99,19 +100,25 @@ const processSingleScheme = async (slug, stats) => {
       logger.warn(`  [${slug}] FAQs unavailable: ${err.message}`);
     }
 
-    // ── Step 4: Upsert ───────────────────────────────────────────────
+    // ── Step 4: Compute isActive from tag matching ───────────────────
+    const tags      = Array.isArray(scheme.tags) ? scheme.tags : [];
+    const isAgri    = tags.some((t) => ALL_AGRI_TAGS.has(t));
+    scheme.isActive = isAgri;
+
+    // ── Step 5: Upsert ──────────────────────────────────────────────────
     if (DRY_RUN) {
-      logger.info(`  [DRY RUN] Would upsert: ${schemeId} — "${scheme.name}"`);
+      logger.info(`  [DRY RUN] Would upsert: ${slug} — "${scheme.name}" (isActive=${isAgri})`);
     } else {
       await Scheme.updateOne(
         { _id: slug },
         { $set: scheme },
         { upsert: true }
       );
-      logger.info(`  ✓ Synced: ${slug} — "${scheme.name}"`,);
+      logger.info(`  ✓ Synced: ${slug} — "${scheme.name}" [isActive=${isAgri}]`);
     }
 
     stats.synced++;
+    if (isAgri) stats.active++; else stats.inactive++;
 
   } catch (error) {
     // Capture failure — log and continue with next scheme
@@ -171,6 +178,8 @@ const syncSchemes = async () => {
   const stats = {
     total:       0,
     synced:      0,
+    active:      0,   // schemes where tag matched agriculture
+    inactive:    0,   // schemes where no tag matched
     failed:      0,
     failedSlugs: [],
   };
@@ -244,6 +253,8 @@ const syncSchemes = async () => {
     logger.info(`  Status   : ${overallStatus.toUpperCase()}`);
     logger.info(`  Total    : ${stats.total}`);
     logger.info(`  Synced   : ${stats.synced}`);
+    logger.info(`  Active   : ${stats.active}   (tag matched — agriculture)`);
+    logger.info(`  Inactive : ${stats.inactive}  (no tag match — non-agriculture)`);
     logger.info(`  Failed   : ${stats.failed}`);
     logger.info(`  Duration : ${durationSeconds}s`);
     if (stats.failedSlugs.length > 0) {
@@ -259,6 +270,8 @@ const syncSchemes = async () => {
           durationSeconds,
           totalSchemes:    stats.total,
           totalSynced:     stats.synced,
+          activeCount:     stats.active,
+          inactiveCount:   stats.inactive,
           failedCount:     stats.failed,
           failedSlugs:     stats.failedSlugs,
           mode:            TEST_MODE ? 'test' : 'production',

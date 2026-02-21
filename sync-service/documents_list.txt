@@ -1,0 +1,225 @@
+Active schemes scanned: 770
+Distinct document types (>= 3 schemes): 220 of 1527 total
+
+Count  Document
+──────────────────────────────────────────────────────────────────────
+  234  Aadhaar Card
+  141  Caste Certificate
+  131  Bank Account Details
+   83  Identity Proof
+   66  Bank Pass Book/Cancelled Cheque
+   65  Ration Card
+   54  Any other documents (if required)
+   45  Passport-size photograph
+   44  Proof of identity (Aadhar card, Voter ID)
+   42  7/12 Certificate
+   39  Bank Passbook
+   37  Mobile Number
+   36  PAN card
+   33  Residence proof
+   33  Disability Certificate from Competent Authority
+   26  Passport Size Photo
+   23  Land Ownership Documents (if applicant has own private land)
+   23  Any other document if required
+   21  Copy of Bank Passbook or Cancelled Cheque
+   20  Address proof
+   20  Scheduled Caste/Scheduled Tribe Certificate (for Scheduled Caste and Scheduled Tribe beneficiaries)
+   18  Bank account
+   18  Passport-size photo
+   17  Bank passbook/account details
+   17  Aadhaar Details (Should be linked with mobile number)
+   17  Farmer details
+   17  Land information
+   17  Lease Agreement (minimum 10 years, if applicable)
+   16  > **For DBT Registration Process
+   16  > **For the Online Application of the Scheme
+   16  Date of Birth Certificate (Voting Card/Birth Certificate/Aadhar Card/Matriculation Certificate)
+   15  Birth Certificate (for Proof of Age)
+   15  Bills/Receipts/Vouchers
+   15  Residence Certificate
+   15  Aadhaar Card/Voter ID/Ration Card/Passport (as proof of identity)
+   14  Training Certificate
+   14  Proof of Land Ownership
+   14  Land ownership documents or lease agreement
+   14  Land document (Ownership / Lease deed/ Rent Agreement etc.)
+   13  Identity proof i.e. Aadhaar Card, Voter ID Card
+   13  Documents proof of possessing own or leased land
+   13  Voter ID/Ration Card/Aadhaar Card/Passport (as proof of identity)
+   13  Consent Form of Co-owners (in case of co-owned land)
+   13  Identity Card
+   12  BPL Certificate
+   12  Below Poverty Line Card
+   12  Barcoded ration card
+   11  Proof of residence
+   10  Savings Account Bank Passbook or Cancelled Check
+   10  Documents proof of having sufficient available cultivable land
+   10  Aadhar Card / Janadhar Card
+   10  Proof of age
+   10  Quotation
+   10  Fishing License
+   10  Bank Account Passbook
+   10  Udhyan Card
+   10  Passport size photograph
+   10  Land Ownership Proof
+   10  Detailed Project Report
+    9  Income Certificate
+    9  Mandate Form
+    9  Copy of Jamabandi (not more than six months old)
+    9  Land Records
+    9  Documents are required as per the department’s guidelines prescribed for this scheme
+    9  Scheduled Tribe Certificate
+    9  Photograph
+    8  Basis (evidence) for land
+    8  1) Aadhaar number
+    8  Land Record 7-12 and 8-A
+    8  Permanent Residence Certificate
+    8  Agreement Deed between beneficiary and Fisheries Department
+    8  Details of Bank Account and PAN Card
+    8  Detail of Bank Account and PAN Card
+    7  Income Proof Certificate
+    7  Quotations
+    7  GST registration certificate
+    7  Bank account details/Bank Passbook
+    7  Other necessary documents if required
+    7  Caste Certificate from First Class Magistrate (Tehsildar)
+    7  Caste certificate, if applicable
+    7  Training certificates
+    7  2) Land documents
+    6  Beneficiary's Undertaking/Consent Form
+    6  Passport Sized Photograph
+    6  Election Photo Identity Card (for Proof of Identity)
+    6  Enrollment certificate as a member of the Fishermen Co-operative Society
+    6  Declaration of not being a recipient of Old Age Pension
+    6  Women farmer group registration documents
+    6  Domicile Certificate
+    6  Identification Proof (Aadhaar Card)
+    6  Government approved photo ID (Aadhaar, Voter ID, etc.)
+    6  Privaar Pahchan Patra (PPP ID)
+    6  Death Certificate
+    6  Photographs of project site
+    6  Documentary proof of applicant’s share in the project
+    6  Certificate of Incorporation (In case of company)
+    6  Partnership Deed (In case of partnership firm)
+    6  Last three years audited Annual financial statements, if applicable
+    6  Last three years income tax returns, if applicable
+    6  Bank statement for last six months
+    6  Canceled cheque along with bank mandate form
+    6  Education certificates
+    6  Experience letter/ certificate about any livestock farming activities done earlier
+    6  Land-related documents, such as Khasra and Khatauni (lease certificate, in case of leased land)
+    6  Copy of land details 7/12 and 8-A
+    6  Copy of forest rights Letter
+    5  Government-approved photo ID i.e. Aadhaar Card, Voter ID Card
+    5  Mandate Form along with Bank Pass Book
+    5  Documents proof of being a farmer
+    5  Scheduled Caste Certificate
+    5  Any other documents if required
+    5  Identity proof i.e. Aadhaar Card
+    5  Land-ownership/ revenue receipt
+    5  Bank passbook copy
+    5  Recent Passport Size Photograph
+    5  Bank Account Details and PAN Card
+    5  Krishi Card Abstract
+    5  Soil Health Card
+    5  Cash Invoice
+    5  Land record documents
+    5  Land-related documents such as Khasra and Khatauni
+    5  Land documents
+    5  Training Certificate of Beneficiary
+    5  GST Bills
+    5  Agreement Letter-1 (Agreement letter between the beneficiary and the department)
+    4  Unemployment Certificate
+    4  3) Bank details
+    4  Undertaking as per Proforma
+    4  Identity proof of the applicant i.e. Aadhaar Card
+    4  Bank account details of beneficiary
+    4  Training Certificate of the beneficiary
+    4  Date of Birth Proof (Voter ID/Birth Certificate/Aadhaar/Matriculation)
+    4  Bill/Receipt/Voucher
+    4  Bank account and PAN card details
+    4  Copy of license
+    4  Passport Size Photos
+    4  Form P-20 Entry Confirmation (recorded by the concerned Patwari)
+    4  Photo
+    4  Applicant's Photo
+    4  Land Proof
+    4  Land related documents
+    4  Jamabandi copy (not older than 6 months)
+    4  Domicile certificate of Madhya Pradesh
+    4  Other Necessary Documents, if required
+    4  Lease certificate (for leased land)
+    4  Claim Form
+    4  Photographs of Cold Storage with beneficiary
+    4  Bank Account Detail
+    4  3) Caste Certificate (SC/ST only)
+    4  Aadhaar Card Copy
+    4  Bank details
+    3  Voter Card
+    3  A valid Bank Account
+    3  Loan account passbook or bank disbursement certificate
+    3  Fishing Vessel License Certificate
+    3  Fishing Net License Certificate
+    3  Copy of Fishing Netbook (Updated)
+    3  Original GST Bill from the Authorized Dealer towards the Construction of the Wooden / FRP Craft
+    3  Caste Certificate (ST/ SC) if applicable
+    3  Copy of Election Card
+    3  Copy of Bank Passbook/Statement (Aadhaar linked)
+    3  Bank letter (if bank financed)
+    3  Soil and water test report
+    3  Proof of possessing necessary animals
+    3  Quotation from approved firm
+    3  Disability Certificate
+    3  Certificate of seed production and supply to the Department
+    3  Certification of seed production
+    3  Residential Certificate
+    3  Recent passport-size photograph
+    3  Certificate of natural breeding or artificial insemination of the animal
+    3  Animal pregnancy diagnosis certificate
+    3  Disability certificate from a competent authority (only if the applicant is disabled)
+    3  Certificate of calving of an animal from Govt. Livestock inspector
+    3  Agreement Deed with Fisheries Department
+    3  Caste Certificate - Caste Certificate issued by 1st Class Magistrate
+    3  Voter ID
+    3  Age Proof
+    3  Proof of Date of Birth
+    3  Irrigation Source Certificate
+    3  Supplier's Quotation
+    3  Medical certificate
+    3  Photo of Availability of shed/space for keeping animals
+    3  Parivaar Pahchan Patra (PPP ID)
+    3  Samagra ID
+    3  ST Certificate
+    3  Domicile Certificate/Permanent Resident Certificate (PRC)
+    3  Agreement 1 - Agreement deed between beneficiary and Fisheries Department
+    3  Proof of membership of the concerned society
+    3  Photocopy of 1st page of Bank Passbook
+    3  Photographs (2 nos.)
+    3  Proof of possessing10 Guntha of land
+    3  Bank Passbook and Cancelled Cheque
+    3  Training Certificate related to the operation/maintenance of cold storage
+    3  Detailed Project Report (DPR) or Self-Contained Proposal (SCP) as per PMMSY guidelines
+    3  Certificate from C.A. with the bills certifying payment compliance with Income Tax/GST rules
+    3  CLU/NOC/Pollution/Fire Certificate from concerned department
+    3  NOC from Gram Sabha/Municipal Corporation/Authority of the area where the unit is located
+    3  Clear Site Plan/Area Site Plan attached with subsidy case
+    3  All documents should be in readable form
+    3  Agreement 1 - Agreement deed between fish farmer and Fisheries Department
+    3  Identity Proof – Ration Card/Aadhar Card/PAN Card/Voter Card
+    3  4) Photographs
+    3  Aadhaar Card of the applicant
+    3  Copy of Society Registration Certificate
+    3  Agreement 1 (agreement deed between the beneficiary and the fisheries Department)
+    3  Documents (duly filled in all respects) common to all claims
+    3  Intimation Form
+    3  Certification by the Appropriate Authority
+    3  Additional Documents for Specific Claims
+    3  > **Note
+    3  Parivar Pehchan Patra (PPP)
+    3  Bank Account Details of the Society
+    3  Other relevant documents as listed by the department from time to time
+    3  Disability Certificate issued by Competent Authority (only for PWDs)
+    3  Samanti Form (for partners holding land in joint name)
+    3  Registration certificate (for entrepreneurs)
+    3  Project Proposal Document
+    3  Registration certificate under the Public Charity Act
+    3  Bank account details of the institution

@@ -28,9 +28,13 @@ function App() {
           name: user.name || '',
           phone: user.phone,
           state: user.state || '',
-          district: user.district || '',
-          landSize: user.landSize || 0,
-          cropType: user.cropType || '',
+          farmerType: user.farmerType,
+          landOwnership: user.landOwnership,
+          ageRange: user.ageRange,
+          caste: user.caste,
+          incomeRange: user.incomeRange,
+          isBPL: user.isBPL,
+          specialCategory: user.specialCategory,
         });
         setCurrentView('dashboard');
       }
@@ -61,15 +65,19 @@ function App() {
     setIsAuthenticated(true);
     const user = authService.getCurrentUser();
     
-    if (user && user.name && user.state && user.district && user.landSize && user.cropType) {
+    if (user && user.name && user.state && user.farmerType) {
       // User has complete profile
       setCurrentFarmer({
         name: user.name,
         phone: user.phone,
         state: user.state,
-        district: user.district,
-        landSize: user.landSize,
-        cropType: user.cropType,
+        farmerType: user.farmerType,
+        landOwnership: user.landOwnership,
+        ageRange: user.ageRange,
+        caste: user.caste,
+        incomeRange: user.incomeRange,
+        isBPL: user.isBPL,
+        specialCategory: user.specialCategory,
       });
       setCurrentView('dashboard');
     } else {

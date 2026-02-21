@@ -1,20 +1,25 @@
 import express, { Application, Request, Response } from 'express';
+import path from 'path';
 import dotenv from 'dotenv';
 import cors from 'cors';
+// Load .env from the same directory as this file (Backend/src/.env)
+dotenv.config({ path: path.join(__dirname, '.env') });
 import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import connectDB from './config/database';
+import { connectSchemesDb } from './config/schemesDb';
 
 // Import routes
 import authRoutes from './routes/auth.routes';
 import schemeRoutes from './routes/scheme.routes';
 import applicationRoutes from './routes/application.routes';
 import documentRoutes from './routes/document.routes';
+import webhookRoutes from './routes/webhook.routes';
+import sessionRoutes from './routes/session.routes';
 
-// Load environment variables
-dotenv.config();
+// (dotenv already loaded at top of file with explicit path)
 
 // Debug: Check NODE_ENV
 console.log('🔧 NODE_ENV:', process.env.NODE_ENV);
@@ -25,6 +30,7 @@ const app: Application = express();
 
 // Connect to MongoDB
 connectDB();
+connectSchemesDb();
 
 // Security middleware
 app.use(helmet());
@@ -76,6 +82,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/schemes', schemeRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/documents', documentRoutes);
+app.use('/api/webhook', webhookRoutes);
+app.use('/api/session', sessionRoutes);
+
 
 // Root endpoint
 app.get('/', (_req: Request, res: Response) => {

@@ -9,6 +9,8 @@
     "sync:test": "cross-env TEST_MODE=true node src/syncSchemes.js",
     "sync:dry": "cross-env DRY_RUN=true node src/syncSchemes.js",
     "sync:now": "cross-env SYNC_ON_START=true node src/scheduler.js",
+    "filter": "node src/scripts/filterSchemes.js",
+    "filter:dry": "cross-env DRY_RUN=true node src/scripts/filterSchemes.js",
     "dev": "nodemon src/scheduler.js"
   },
   "keywords": ["yojanamitra", "myscheme", "sync", "government-schemes", "farmers"],

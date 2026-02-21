@@ -28,11 +28,13 @@ export interface UserProfile {
   name?: string;
   state?: string;
   district?: string;
-  landSize?: number;
-  cropType?: string;
-  farmerCategory?: 'small' | 'marginal' | 'large';
-  age?: number;
-  incomeRange?: string;
+  farmerType?: 'crop_farmer' | 'dairy' | 'fisherman' | 'labourer' | 'entrepreneur' | 'other';
+  landOwnership?: 'owned' | 'none' | 'leased';
+  ageRange?: 'below_18' | '18_40' | '41_60' | 'above_60';
+  caste?: 'general' | 'sc' | 'st' | 'obc' | 'not_disclosed';
+  incomeRange?: 'below_1L' | '1_3L' | '3_8L' | 'above_8L';
+  isBPL?: boolean;
+  specialCategory?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -41,11 +43,13 @@ export interface UpdateProfileRequest {
   name?: string;
   state?: string;
   district?: string;
-  landSize?: number;
-  cropType?: string;
-  farmerCategory?: 'small' | 'marginal' | 'large';
-  age?: number;
-  incomeRange?: string;
+  farmerType?: 'crop_farmer' | 'dairy' | 'fisherman' | 'labourer' | 'entrepreneur' | 'other';
+  landOwnership?: 'owned' | 'none' | 'leased';
+  ageRange?: 'below_18' | '18_40' | '41_60' | 'above_60';
+  caste?: 'general' | 'sc' | 'st' | 'obc' | 'not_disclosed';
+  incomeRange?: 'below_1L' | '1_3L' | '3_8L' | 'above_8L';
+  isBPL?: boolean;
+  specialCategory?: string[];
 }
 
 export interface AuthResponse {

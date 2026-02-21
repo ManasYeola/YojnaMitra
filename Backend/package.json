@@ -7,7 +7,11 @@
     "dev": "nodemon src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "seed": "ts-node src/scripts/seedSchemes.ts"
+    "seed": "ts-node src/scripts/seedSchemes.ts",
+    "parse-eligibility:llm": "node src/scripts/parseEligibilityLLM.js",
+    "parse-eligibility:llm:force": "node src/scripts/parseEligibilityLLM.js --force",
+    "parse-eligibility:groq": "node src/scripts/parseEligibilityGroq.js",
+    "parse-eligibility:groq:force": "node src/scripts/parseEligibilityGroq.js --force"
   },
   "keywords": [
     "farmer",
@@ -33,7 +37,8 @@
     "mongoose": "^8.0.3",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
-    "nodemailer": "^8.0.1"
+    "nodemailer": "^8.0.1",
+    "twilio": "^5.12.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
