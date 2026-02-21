@@ -2,6 +2,15 @@
 
 Backend server for YojnaMitra - A comprehensive farmer support system that helps farmers discover and apply for government schemes.
 
+## ✨ Key Features
+
+- 🔐 **OTP-based Authentication** - Secure phone/email verification
+- 🎯 **Intelligent Eligibility Checking** - AI-powered scheme matching based on farmer profiles
+- 📊 **Scheme Recommendations** - Personalized suggestions with match scoring
+- 📄 **Application Management** - Track application status and documents
+- 🔄 **Auto-Sync** - Daily synchronization with MyScheme government API
+- 📱 **RESTful API** - Clean, documented endpoints for frontend integration
+
 ## 🛠️ Tech Stack
 
 - **Runtime**: Node.js 18+
@@ -116,9 +125,16 @@ The server will run on `http://localhost:5000`
 | GET | `/api/schemes` | Get all schemes | No |
 | GET | `/api/schemes/:id` | Get scheme by ID | No |
 | GET | `/api/schemes/user/recommended` | Get recommended schemes for user | Yes |
+| **GET** | **`/api/schemes/eligible`** | **Get eligible schemes (with scoring)** | **Yes** |
+| **POST** | **`/api/schemes/:id/check-eligibility`** | **Check eligibility for specific scheme** | **No*** |
+| **POST** | **`/api/schemes/check-eligibility-batch`** | **Batch eligibility check** | **No*** |
 | POST | `/api/schemes` | Create new scheme (Admin) | Yes |
 | PATCH | `/api/schemes/:id` | Update scheme (Admin) | Yes |
 | DELETE | `/api/schemes/:id` | Delete scheme (Admin) | Yes |
+
+**\*** = Optional auth. If authenticated, uses user profile. Otherwise, requires `userData` in request body.
+
+> 📘 **New Feature**: Intelligent eligibility checking! See [ELIGIBILITY_API.md](./ELIGIBILITY_API.md) for detailed documentation.
 
 ### Applications
 

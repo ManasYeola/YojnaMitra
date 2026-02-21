@@ -5,9 +5,11 @@ interface LandingPageProps {
   onGetStarted: () => void;
   onSignIn: () => void;
   onSignUp: () => void;
+  isAuthenticated?: boolean;
+  farmerName?: string;
 }
 
-function LandingPage({ onGetStarted, onSignIn, onSignUp }: LandingPageProps) {
+function LandingPage({ onGetStarted, onSignIn, onSignUp, isAuthenticated, farmerName }: LandingPageProps) {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -67,12 +69,16 @@ function LandingPage({ onGetStarted, onSignIn, onSignUp }: LandingPageProps) {
               <span className="gradient-text">You Can Trust.</span>
             </h1>
             <p className="hero-description">
-              Leveraging technology to bring unprecedented transparency to agricultural financing. 
-              Access subsidies, loans, and insurance schemes designed specifically for farmers across India.
+              {isAuthenticated && farmerName ? (
+                <>Welcome back, <strong>{farmerName}</strong>! Continue exploring schemes tailored for you.</>
+              ) : (
+                <>Leveraging technology to bring unprecedented transparency to agricultural financing. 
+                Access subsidies, loans, and insurance schemes designed specifically for farmers across India.</>
+              )}
             </p>
             <div className="hero-actions">
               <button className="btn-primary" onClick={onGetStarted}>
-                <span>Start Your Journey</span>
+                <span>{isAuthenticated ? 'Continue to Dashboard' : 'Start Your Journey'}</span>
                 <span className="btn-icon">→</span>
               </button>
             </div>
@@ -289,7 +295,7 @@ function LandingPage({ onGetStarted, onSignIn, onSignUp }: LandingPageProps) {
                 </div>
               </div>
               <button className="btn-primary" onClick={onGetStarted}>
-                Start Now - It's Free
+                {isAuthenticated ? 'Go to My Dashboard' : 'Start Now - It\'s Free'}
               </button>
             </div>
             <div className="benefits-visual">
