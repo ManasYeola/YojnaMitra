@@ -517,8 +517,10 @@
 /* Hero Visual - Floating Cards Style */
 .hero-visual {
   position: relative;
-  height: 550px;
+  height: 520px;
   animation: fadeInUp 1s ease-out 0.3s both;
+  border-radius: 24px;
+  overflow: hidden;
 }
 
 .floating-card {
@@ -779,82 +781,161 @@
   margin: 0 auto;
 }
 
-/* Features Section */
+/* ── Features Section ── */
 .features-section {
-  background: white;
+  background: linear-gradient(180deg, #f8fffe 0%, #ffffff 100%);
+  padding: 3rem 0 4rem;
+}
+
+.features-header {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 2.5rem;
 }
 
 .features-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2.5rem;
+  gap: 2rem;
 }
 
+/* Base card */
 .feature-card {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.03), rgba(5, 150, 105, 0.03));
-  border: 1px solid rgba(16, 185, 129, 0.1);
-  border-radius: 24px;
-  padding: 2.5rem;
-  transition: all 0.4s;
-  cursor: pointer;
+  position: relative;
+  border-radius: 28px;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow: hidden;
+  transition: transform 0.35s cubic-bezier(.22,.68,0,1.2), box-shadow 0.35s ease;
+  cursor: default;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  border-radius: 28px;
 }
 
 .feature-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 50px rgba(16, 185, 129, 0.2);
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.08));
-  border-color: rgba(16, 185, 129, 0.3);
 }
 
+.feature-card:hover::before {
+  opacity: 1;
+}
+
+/* Teal variant */
+.feature-card--teal {
+  background: linear-gradient(145deg, #e6faf7 0%, #f0fdf9 100%);
+  border: 1.5px solid rgba(20, 184, 166, 0.25);
+  box-shadow: 0 4px 24px rgba(20, 184, 166, 0.08);
+}
+.feature-card--teal::before {
+  background: linear-gradient(145deg, rgba(20,184,166,0.12), rgba(15,118,110,0.06));
+}
+.feature-card--teal:hover {
+  box-shadow: 0 24px 56px rgba(20, 184, 166, 0.22);
+  border-color: rgba(20, 184, 166, 0.5);
+}
+.feature-card--teal .feature-icon-wrapper {
+  background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
+  box-shadow: 0 8px 28px rgba(20, 184, 166, 0.38);
+}
+
+/* Green variant */
+.feature-card--green {
+  background: linear-gradient(145deg, #e8faf0 0%, #f0fdf4 100%);
+  border: 1.5px solid rgba(34, 197, 94, 0.22);
+  box-shadow: 0 4px 24px rgba(34, 197, 94, 0.07);
+}
+.feature-card--green::before {
+  background: linear-gradient(145deg, rgba(34,197,94,0.1), rgba(21,128,61,0.05));
+}
+.feature-card--green:hover {
+  box-shadow: 0 24px 56px rgba(34, 197, 94, 0.2);
+  border-color: rgba(34, 197, 94, 0.45);
+}
+.feature-card--green .feature-icon-wrapper {
+  background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
+  box-shadow: 0 8px 28px rgba(34, 197, 94, 0.35);
+}
+
+/* Emerald variant */
+.feature-card--emerald {
+  background: linear-gradient(145deg, #ecfdf5 0%, #f0fff8 100%);
+  border: 1.5px solid rgba(16, 185, 129, 0.22);
+  box-shadow: 0 4px 24px rgba(16, 185, 129, 0.07);
+}
+.feature-card--emerald::before {
+  background: linear-gradient(145deg, rgba(16,185,129,0.1), rgba(4,120,87,0.05));
+}
+.feature-card--emerald:hover {
+  box-shadow: 0 24px 56px rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.45);
+}
+.feature-card--emerald .feature-icon-wrapper {
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+  box-shadow: 0 8px 28px rgba(16, 185, 129, 0.35);
+}
+
+/* Icon wrapper */
 .feature-icon-wrapper {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, #14b8a6, #0f766e);
-  border-radius: 20px;
+  width: 68px;
+  height: 68px;
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
-  transition: all 0.4s;
+  flex-shrink: 0;
+  transition: transform 0.4s cubic-bezier(.22,.68,0,1.4), box-shadow 0.4s ease;
+  color: #ffffff;
 }
 
 .feature-card:hover .feature-icon-wrapper {
-  transform: rotateY(180deg);
+  transform: scale(1.12) rotate(-4deg);
 }
 
-.feature-icon {
-  font-size: 2.5rem;
-}
-
-.feature-card h3 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #1f2937;
-  margin-bottom: 1rem;
-  margin-top: 0;
-}
-
-.feature-card p {
-  font-size: 1rem;
-  color: #6b7280;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-}
-
-.feature-list {
-  list-style: none;
-  padding: 0;
+/* Card body text */
+.feature-card-body {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
+.feature-card h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0f2e22;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.feature-card p {
+  font-size: 0.97rem;
+  color: #4b6b5d;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
 .feature-list li {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   color: #0f766e;
   font-weight: 600;
-  padding-left: 1.5rem;
+  padding-left: 1.6rem;
   position: relative;
 }
 
@@ -863,7 +944,8 @@
   position: absolute;
   left: 0;
   color: #14b8a6;
-  font-weight: bold;
+  font-weight: 800;
+  font-size: 0.85rem;
 }
 
 /* How It Works Section */
@@ -1521,3 +1603,160 @@
     padding: 1.25rem 2rem;
   }
 }
+
+/* ─── Two-Paths Section ─────────────────────────────────────────────────────── */
+.two-paths-section {
+  background: #d4f0d8;
+}
+
+.two-paths-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.path-card {
+  background: white;
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  border: 2px solid transparent;
+  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.path-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5px;
+  border-radius: 24px 24px 0 0;
+}
+
+.path-web::before  { background: linear-gradient(90deg, #0f766e, #14b8a6); }
+.path-whatsapp::before { background: linear-gradient(90deg, #16a34a, #22c55e); }
+
+.path-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+}
+
+.path-web:hover     { border-color: #14b8a6; }
+.path-whatsapp:hover { border-color: #22c55e; }
+
+.path-icon-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.path-icon-web { background: #e0f2fe; color: #0f766e; }
+.path-icon-wa  { background: #dcfce7; color: #16a34a; }
+
+.path-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1f2937;
+  margin: 0;
+}
+
+.path-subtitle {
+  font-size: 0.88rem;
+  color: #6b7280;
+  font-weight: 500;
+  margin: -0.5rem 0 0;
+}
+
+.path-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  flex: 1;
+}
+
+.path-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #14b8a6, #0f766e);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.path-whatsapp .step-num {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.path-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: none;
+  margin-top: 0.5rem;
+}
+
+.path-cta-web {
+  background: linear-gradient(135deg, #0f766e, #14b8a6);
+  color: white;
+  box-shadow: 0 4px 20px rgba(20,184,166,0.3);
+}
+
+.path-cta-web:hover {
+  box-shadow: 0 8px 30px rgba(20,184,166,0.45);
+  transform: translateY(-2px);
+}
+
+.path-cta-wa {
+  background: #16a34a;
+  color: white;
+  box-shadow: 0 4px 20px rgba(22,163,74,0.3);
+}
+
+.path-cta-wa:hover {
+  background: #15803d;
+  box-shadow: 0 8px 30px rgba(22,163,74,0.45);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .two-paths-grid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+  }
+}
+

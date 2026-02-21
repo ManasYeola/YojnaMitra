@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
-import type { Farmer, Scheme, Application } from '../types';
-import SchemeCard from './SchemeCard';
-import schemeService from '../services/scheme.service';
+import type { Farmer } from '../types';
 import authService from '../services/auth.service';
+import '../styles/Dashboard.css';
+
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 interface DashboardProps {
   farmer: Farmer;
   onLogout: () => void;
-  onFindSchemes: () => void;
 }
 
-interface EligibilityResult {
+interface EligibleScheme {
   scheme: {
     _id: string;
     name: string;
@@ -18,8 +18,13 @@ interface EligibilityResult {
     level: string;
     state: string | null;
     description: string;
+    description_md?: string;
+    benefits_md?: string;
+    eligibility_md?: string;
+    applicationProcess_md?: string;
     amount: string;
     applyUrl: string;
+    basicDetails?: any;
   };
   eligibility: {
     isEligible: boolean;
@@ -30,555 +35,330 @@ interface EligibilityResult {
   };
 }
 
-interface FilterCriteria {
-  state: string;
-  landSize: number;
-  cropType: string;
-  farmerCategory: string;
-  minScore: number;
-}
+// ── Label helpers ──────────────────────────────────────────────────────────────
 
-export default function Dashboard({ farmer, onLogout, onFindSchemes }: DashboardProps) {
-  const [activeTab, setActiveTab] = useState<'recommended' | 'all' | 'applications'>('recommended');
-  const [eligibleSchemes, setEligibleSchemes] = useState<EligibilityResult[]>([]);
-  const [allSchemes, setAllSchemes] = useState<any[]>([]);
-  const [applications, setApplications] = useState<Application[]>([]);
+const farmerTypeLabel: Record<string, string> = {
+  crop_farmer: 'Crop Farmer',
+  dairy: 'Dairy Farmer',
+  fisherman: 'Fisherman',
+  labourer: 'Agriculture Labourer',
+  entrepreneur: 'Agri Entrepreneur',
+  other: 'Other',
+};
+
+const ageRangeLabel: Record<string, string> = {
+  below_18: 'Below 18',
+  '18_40': '18 – 40 years',
+  '41_60': '41 – 60 years',
+  above_60: 'Above 60',
+};
+
+const incomeLabel: Record<string, string> = {
+  below_1L: 'Below ₹1 Lakh',
+  '1_3L': '₹1 – 3 Lakh',
+  '3_8L': '₹3 – 8 Lakh',
+  above_8L: 'Above ₹8 Lakh',
+};
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
+export default function Dashboard({ farmer, onLogout }: DashboardProps) {
+  const [schemes, setSchemes] = useState<EligibleScheme[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showFilters, setShowFilters] = useState(false);
-  
-  // Filter criteria state
-  const [filters, setFilters] = useState<FilterCriteria>({
-    state: farmer.state,
-    landSize: farmer.landSize,
-    cropType: farmer.cropType,
-    farmerCategory: farmer.farmerCategory || 'small',
-    minScore: 50,
-  });
+  const [error, setError] = useState('');
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<'all' | 'national' | 'state'>('all');
 
-  // Fetch eligible schemes on mount and when filters change
   useEffect(() => {
     fetchEligibleSchemes();
   }, []);
 
-  useEffect(() => {
-    if (activeTab === 'all') {
-      fetchAllSchemes();
-    }
-  }, [activeTab]);
-
   const fetchEligibleSchemes = async () => {
     try {
       setLoading(true);
+      setError('');
       const token = authService.getToken();
       if (!token) {
-        console.error('No auth token found');
+        setError('Session expired. Please sign in again.');
         return;
       }
-
-      const response = await fetch(
-        `http://localhost:5000/api/schemes/eligible?minScore=${filters.minScore}&limit=50`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        }
+      const res = await fetch(
+        'http://localhost:5000/api/schemes/eligible?minScore=0&limit=100',
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      const data = await response.json();
+      const data = await res.json();
       if (data.success) {
-        setEligibleSchemes(data.data.schemes || []);
+        setSchemes(data.data?.schemes || []);
+      } else {
+        setError(data.message || 'Could not load schemes.');
       }
-    } catch (error) {
-      console.error('Error fetching eligible schemes:', error);
+    } catch {
+      setError('Could not connect to server. Make sure the backend is running.');
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchAllSchemes = async () => {
-    try {
-      const response: any = await schemeService.getAllSchemes();
-      // Backend returns {success, message, data: {count, schemes}}
-      setAllSchemes(response.data?.schemes || response.data || []);
-    } catch (error) {
-      console.error('Error fetching all schemes:', error);
-    }
+  const filtered = schemes.filter((s) => {
+    if (activeFilter === 'national') return s.scheme.level === 'National' || s.scheme.level === 'Central';
+    if (activeFilter === 'state') return s.scheme.level !== 'National' && s.scheme.level !== 'Central';
+    return true;
+  });
+
+  const getApplyUrl = (scheme: EligibleScheme['scheme']): string =>
+    scheme.applyUrl ||
+    scheme.basicDetails?.schemeUrl ||
+    `https://www.myscheme.gov.in/schemes/${scheme._id}`;
+
+  const getCategories = (cat: any[]): string[] => {
+    if (!Array.isArray(cat)) return [];
+    return cat
+      .slice(0, 3)
+      .map((c) => (typeof c === 'string' ? c : c?.schemeCategoryName || ''))
+      .filter(Boolean);
   };
 
-  const checkCustomEligibility = async () => {
-    try {
-      setLoading(true);
-      const userData = {
-        state: filters.state,
-        landSize: filters.landSize,
-        cropType: filters.cropType,
-        farmerCategory: filters.farmerCategory,
-      };
-
-      // Fetch all schemes and check eligibility for each
-      const response: any = await schemeService.getAllSchemes();
-      const schemes = response.data?.schemes || response.data || [];
-
-      const eligibilityResults: EligibilityResult[] = [];
-
-      for (const scheme of schemes.slice(0, 20)) {
-        try {
-          const response = await fetch(
-            `http://localhost:5000/api/schemes/${scheme._id}/check-eligibility`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ userData }),
-            }
-          );
-
-          const data = await response.json();
-          if (data.success && data.data.eligibility.isEligible && 
-              data.data.eligibility.matchScore >= filters.minScore) {
-            eligibilityResults.push(data.data);
-          }
-        } catch (err) {
-          console.error(`Error checking eligibility for ${scheme.name}:`, err);
-        }
-      }
-
-      // Sort by match score
-      eligibilityResults.sort((a, b) => b.eligibility.matchScore - a.eligibility.matchScore);
-      setEligibleSchemes(eligibilityResults);
-    } catch (error) {
-      console.error('Error checking custom eligibility:', error);
-    } finally {
-      setLoading(false);
-    }
+  const getDescription = (s: EligibleScheme['scheme']): string => {
+    const text = s.description_md || s.description || '';
+    return text.replace(/[#*`]/g, '').substring(0, 200) || 'Government welfare scheme.';
   };
 
-  const handleApply = (schemeId: string) => {
-    const scheme = eligibleSchemes.find(s => s.scheme._id === schemeId)?.scheme ||
-                   allSchemes.find(s => s._id === schemeId);
-    if (scheme) {
-      const newApplication: Application = {
-        id: `app-${Date.now()}`,
-        schemeId: scheme._id,
-        schemeName: scheme.name,
-        status: 'pending',
-        appliedDate: new Date().toLocaleDateString(),
-        lastUpdated: new Date().toLocaleDateString()
-      };
-      setApplications(prev => [newApplication, ...prev]);
-      alert(`Application submitted for ${scheme.name}! Check Applications tab for status.`);
-    }
-  };
+  const scoreColor = (score: number) =>
+    score >= 80 ? '#16a34a' : score >= 60 ? '#2563eb' : '#d97706';
 
-  const getStatusColor = (status: Application['status']) => {
-    const colors = {
-      pending: '#f59e0b',
-      approved: '#10b981',
-      rejected: '#ef4444',
-      'under-review': '#3b82f6'
-    };
-    return colors[status];
-  };
+  // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <div className="dashboard">
-      <header className="dashboard-header">
-        <div className="header-content">
-          <div>
-            <h1>Welcome, {farmer.name}!</h1>
-            <p className="farmer-info">
-              {farmer.district}, {farmer.state} | {farmer.cropType} | {farmer.landSize} acres
-            </p>
+    <div className="web-dashboard">
+
+      {/* ── Header ── */}
+      <header className="wd-header">
+        <div className="wd-header-inner">
+          <div className="wd-logo">
+            <img src="/logo.png" alt="YojanaMitra" />
+            <span>YojanaMitra</span>
           </div>
-          <div className="header-actions">
-            <button onClick={onFindSchemes} className="find-schemes-btn">Find Schemes</button>
-            <button onClick={onLogout} className="logout-btn">Logout</button>
+          <div className="wd-user">
+            <div className="wd-avatar">{farmer.name?.[0] ?? '?'}</div>
+            <div>
+              <p className="wd-user-name">{farmer.name}</p>
+              <p className="wd-user-sub">
+                {farmer.state}
+                {farmer.farmerType ? ` · ${farmerTypeLabel[farmer.farmerType] ?? farmer.farmerType}` : ''}
+              </p>
+            </div>
           </div>
+          <button className="wd-logout" onClick={onLogout}>Sign Out</button>
         </div>
       </header>
 
-      <div className="dashboard-stats">
-        <div className="stat-card">
-          <div className="stat-icon"></div>
-          <div>
-            <div className="stat-value">{eligibleSchemes.length}</div>
-            <div className="stat-label">Recommended Schemes</div>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon"></div>
-          <div>
-            <div className="stat-value">{allSchemes.length || '8'}</div>
-            <div className="stat-label">Total Schemes Available</div>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon"></div>
-          <div>
-            <div className="stat-value">{applications.length}</div>
-            <div className="stat-label">Applications Submitted</div>
-          </div>
+      {/* ── Profile summary pill row ── */}
+      <div className="wd-profile-bar">
+        <div className="wd-profile-inner">
+          {farmer.ageRange && (
+            <span className="wd-pill">🎂 {ageRangeLabel[farmer.ageRange] ?? farmer.ageRange}</span>
+          )}
+          {farmer.incomeRange && (
+            <span className="wd-pill">💰 {incomeLabel[farmer.incomeRange] ?? farmer.incomeRange}</span>
+          )}
+          {farmer.landOwnership && (
+            <span className="wd-pill">🌾 Land: {farmer.landOwnership}</span>
+          )}
+          {farmer.caste && farmer.caste !== 'not_disclosed' && (
+            <span className="wd-pill">🏷 {farmer.caste.toUpperCase()}</span>
+          )}
+          {farmer.isBPL && <span className="wd-pill wd-pill-red">BPL</span>}
+          {farmer.specialCategory && farmer.specialCategory.length > 0 && (
+            <span className="wd-pill wd-pill-blue">{farmer.specialCategory.join(', ')}</span>
+          )}
         </div>
       </div>
 
-      {/* Smart Filter Panel */}
-      <div className="filter-panel">
-        <div className="filter-header">
-          <div className="filter-title">
-            <span className="filter-icon"></span>
-            <h3>Find Schemes Tailored for You</h3>
+      {/* ── Main content ── */}
+      <main className="wd-main">
+
+        {/* Section title + filter tabs */}
+        <div className="wd-section-head">
+          <div>
+            <h2 className="wd-title">Your Eligible Schemes</h2>
+            {!loading && !error && (
+              <p className="wd-subtitle">
+                <strong>{filtered.length}</strong> scheme{filtered.length !== 1 ? 's' : ''} matched
+                to your profile
+              </p>
+            )}
           </div>
-          <button 
-            className="toggle-filters-btn"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            {showFilters ? 'Hide Filters' : 'Show Filters'}
-          </button>
+          <div className="wd-tabs">
+            {(['all', 'national', 'state'] as const).map((f) => (
+              <button
+                key={f}
+                className={`wd-tab${activeFilter === f ? ' active' : ''}`}
+                onClick={() => setActiveFilter(f)}
+              >
+                {f === 'all' ? 'All' : f === 'national' ? 'National' : 'State'}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {showFilters && (
-          <div className="filter-content">
-            <div className="filter-grid">
-              <div className="filter-group">
-                <label htmlFor="state">State</label>
-                <select
-                  id="state"
-                  value={filters.state}
-                  onChange={(e) => setFilters({ ...filters, state: e.target.value })}
-                >
-                  <option value="Maharashtra">Maharashtra</option>
-                  <option value="Punjab">Punjab</option>
-                  <option value="Haryana">Haryana</option>
-                  <option value="Uttar Pradesh">Uttar Pradesh</option>
-                  <option value="Karnataka">Karnataka</option>
-                  <option value="Tamil Nadu">Tamil Nadu</option>
-                  <option value="Gujarat">Gujarat</option>
-                  <option value="Rajasthan">Rajasthan</option>
-                  <option value="Madhya Pradesh">Madhya Pradesh</option>
-                  <option value="West Bengal">West Bengal</option>
-                </select>
-              </div>
+        {/* Loading */}
+        {loading && (
+          <div className="wd-loading">
+            <div className="wd-spinner"></div>
+            <p>Finding schemes matched to your profile…</p>
+          </div>
+        )}
 
-              <div className="filter-group">
-                <label htmlFor="landSize">Land Size (acres)</label>
-                <input
-                  type="number"
-                  id="landSize"
-                  min="0"
-                  step="0.1"
-                  value={filters.landSize}
-                  onChange={(e) => setFilters({ ...filters, landSize: parseFloat(e.target.value) || 0 })}
-                  placeholder="Enter land size"
+        {/* Error */}
+        {!loading && error && (
+          <div className="wd-error-card">
+            <div className="wd-error-icon">⚠️</div>
+            <h3>Could not load schemes</h3>
+            <p>{error}</p>
+            <button className="wd-retry-btn" onClick={fetchEligibleSchemes}>Retry</button>
+          </div>
+        )}
+
+        {/* Scheme cards */}
+        {!loading && !error && filtered.length > 0 && (
+          <div className="wd-schemes-grid">
+            {filtered.map(({ scheme, eligibility }) => (
+              <div key={scheme._id} className="wd-card">
+
+                {/* Top colour bar */}
+                <div
+                  className="wd-card-bar"
+                  style={{ background: scoreColor(eligibility.matchScore) }}
                 />
-              </div>
 
-              <div className="filter-group">
-                <label htmlFor="cropType">Crop Type</label>
-                <input
-                  type="text"
-                  id="cropType"
-                  value={filters.cropType}
-                  onChange={(e) => setFilters({ ...filters, cropType: e.target.value })}
-                  placeholder="e.g., rice, wheat, cotton"
-                />
-              </div>
-
-              <div className="filter-group">
-                <label htmlFor="farmerCategory">Farmer Category</label>
-                <select
-                  id="farmerCategory"
-                  value={filters.farmerCategory}
-                  onChange={(e) => setFilters({ ...filters, farmerCategory: e.target.value })}
-                >
-                  <option value="marginal">Marginal Farmer</option>
-                  <option value="small">Small Farmer</option>
-                  <option value="large">Large Farmer</option>
-                </select>
-              </div>
-
-              <div className="filter-group">
-                <label htmlFor="minScore">Minimum Match Score (%)</label>
-                <div className="range-container">
-                  <input
-                    type="range"
-                    id="minScore"
-                    min="0"
-                    max="100"
-                    step="5"
-                    value={filters.minScore}
-                    onChange={(e) => setFilters({ ...filters, minScore: parseInt(e.target.value) })}
-                  />
-                  <span className="range-value">{filters.minScore}%</span>
-                </div>
-              </div>
-
-              <div className="filter-actions">
-                <button 
-                  className="btn-apply-filters"
-                  onClick={checkCustomEligibility}
-                  disabled={loading}
-                >
-                  {loading ? 'Searching...' : 'Find Matching Schemes'}
-                </button>
-                <button 
-                  className="btn-reset-filters"
-                  onClick={() => {
-                    setFilters({
-                      state: farmer.state,
-                      landSize: farmer.landSize,
-                      cropType: farmer.cropType,
-                      farmerCategory: farmer.farmerCategory || 'small',
-                      minScore: 50,
-                    });
-                    fetchEligibleSchemes();
-                  }}
-                >
-                  Reset to Profile
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <nav className="dashboard-nav">
-        <button 
-          className={activeTab === 'recommended' ? 'active' : ''}
-          onClick={() => setActiveTab('recommended')}
-        >
-          Recommended for You
-        </button>
-        <button 
-          className={activeTab === 'all' ? 'active' : ''}
-          onClick={() => setActiveTab('all')}
-        >
-          All Schemes
-        </button>
-        <button 
-          className={activeTab === 'applications' ? 'active' : ''}
-          onClick={() => setActiveTab('applications')}
-        >
-          My Applications
-        </button>
-      </nav>
-
-      <div className="dashboard-content">
-        {activeTab === 'recommended' && (
-          <div className="schemes-section">
-            <h2>Schemes Matched to Your Profile</h2>
-            {loading ? (
-              <div className="loading-state">
-                <div className="loader"></div>
-                <p>Finding the best schemes for you...</p>
-              </div>
-            ) : eligibleSchemes.length > 0 ? (
-              <div className="schemes-grid">
-                {eligibleSchemes.map(({ scheme, eligibility }) => (
-                  <div key={scheme._id} className="enhanced-scheme-card">
-                    <div className="scheme-card-header">
-                      <div className="scheme-title-section">
-                        <h3>{scheme.name}</h3>
-                        {scheme.level && (
-                          <span className="scheme-level">{scheme.level}</span>
-                        )}
-                      </div>
-                      <div className="match-badge" style={{
-                        background: eligibility.matchScore >= 80 ? '#10b981' : 
-                                   eligibility.matchScore >= 60 ? '#3b82f6' : '#f59e0b'
-                      }}>
-                        {eligibility.matchScore}% Match
-                      </div>
-                    </div>
-
-                    {scheme.category && Array.isArray(scheme.category) && scheme.category.length > 0 && (
-                      <div className="scheme-categories">
-                        {scheme.category.slice(0, 2).map((cat: any, idx: number) => (
-                          <span key={idx} className="category-tag">
-                            {typeof cat === 'string' ? cat : cat.schemeCategoryName || 'General'}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    <p className="scheme-description">
-                      {scheme.description?.substring(0, 150) || 'Government scheme details'}...
-                    </p>
-
-                    {scheme.amount && (
-                      <div className="scheme-amount">
-                        <span className="amount-label">Amount:</span>
-                        <span className="amount-value">{scheme.amount}</span>
-                      </div>
-                    )}
-
-                    <div className="eligibility-criteria">
-                      <h4>Why you qualify:</h4>
-                      <ul className="criteria-list">
-                        {eligibility.matchedCriteria.slice(0, 3).map((criteria, idx) => (
-                          <li key={idx} className="criteria-matched">
-                            {criteria}
-                          </li>
-                        ))}
-                      </ul>
-                      {eligibility.unmatchedCriteria.length > 0 && (
-                        <details className="unmatched-details">
-                          <summary>View limitations ({eligibility.unmatchedCriteria.length})</summary>
-                          <ul className="criteria-list">
-                            {eligibility.unmatchedCriteria.map((criteria, idx) => (
-                              <li key={idx} className="criteria-unmatched">
-                                {criteria}
-                              </li>
-                            ))}
-                          </ul>
-                        </details>
-                      )}
-                    </div>
-
-                    <div className="scheme-actions">
-                      <button 
-                        className="btn-apply"
-                        onClick={() => handleApply(scheme._id)}
-                      >
-                        Apply Now
-                      </button>
-                      {scheme.applyUrl && (
-                        <a 
-                          href={scheme.applyUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn-learn-more"
-                        >
-                          Learn More →
-                        </a>
-                      )}
-                    </div>
+                <div className="wd-card-body">
+                  {/* Title row */}
+                  <div className="wd-card-title-row">
+                    <h3 className="wd-card-name">{scheme.name}</h3>
+                    <span
+                      className="wd-match-badge"
+                      style={{ background: scoreColor(eligibility.matchScore) }}
+                    >
+                      {eligibility.matchScore}% match
+                    </span>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="empty-state">
-                <div className="empty-icon"></div>
-                <h3>No matching schemes found</h3>
-                <p>Try adjusting your filters above to find more schemes</p>
-                <button 
-                  className="btn-primary"
-                  onClick={() => {
-                    setFilters({ ...filters, minScore: 30 });
-                    setTimeout(() => checkCustomEligibility(), 100);
-                  }}
-                >
-                  Lower Match Requirements
-                </button>
-              </div>
-            )}
-          </div>
-        )}
 
-        {activeTab === 'all' && (
-          <div className="schemes-section">
-            <div className="section-header">
-              <h2>All Available Schemes</h2>
-            </div>
-            {allSchemes.length > 0 ? (
-              <div className="schemes-grid">
-                {allSchemes.map(scheme => (
-                  <div key={scheme._id} className="enhanced-scheme-card">
-                    <div className="scheme-card-header">
-                      <div className="scheme-title-section">
-                        <h3>{scheme.name}</h3>
-                        {scheme.level && (
-                          <span className="scheme-level">{scheme.level}</span>
-                        )}
-                      </div>
-                    </div>
-
-                    {scheme.category && Array.isArray(scheme.category) && (
-                      <div className="scheme-categories">
-                        {scheme.category.slice(0, 2).map((cat: any, idx: number) => (
-                          <span key={idx} className="category-tag">
-                            {typeof cat === 'string' ? cat : cat.schemeCategoryName || 'General'}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    <p className="scheme-description">
-                      {scheme.description?.substring(0, 150) || 
-                       scheme.description_md?.substring(0, 150) || 
-                       'Government scheme details'}...
-                    </p>
-
-                    {scheme.amount && (
-                      <div className="scheme-amount">
-                        <span className="amount-label">Amount:</span>
-                        <span className="amount-value">{scheme.amount}</span>
-                      </div>
-                    )}
-
-                    <div className="scheme-actions">
-                      <button 
-                        className="btn-apply"
-                        onClick={() => handleApply(scheme._id)}
-                      >
-                        Apply Now
-                      </button>
-                      {scheme.applyUrl && (
-                        <a 
-                          href={scheme.applyUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn-learn-more"
-                        >
-                          Learn More →
-                        </a>
-                      )}
-                    </div>
+                  {/* Level + state badges */}
+                  <div className="wd-card-meta">
+                    {scheme.level && <span className="wd-badge wd-badge-green">{scheme.level}</span>}
+                    {scheme.state && <span className="wd-badge wd-badge-blue">{scheme.state}</span>}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="empty-state">
-                <p>Loading schemes...</p>
-              </div>
-            )}
-          </div>
-        )}
 
-        {activeTab === 'applications' && (
-          <div className="applications-section">
-            <h2>My Applications</h2>
-            {applications.length > 0 ? (
-              <div className="applications-list">
-                {applications.map(app => (
-                  <div key={app.id} className="application-card">
-                    <div className="app-header">
-                      <h3>{app.schemeName}</h3>
-                      <span 
-                        className="app-status"
-                        style={{ backgroundColor: getStatusColor(app.status) }}
-                      >
-                        {app.status.toUpperCase()}
+                  {/* Category tags */}
+                  {getCategories(scheme.category).length > 0 && (
+                    <div className="wd-tags">
+                      {getCategories(scheme.category).map((cat, i) => (
+                        <span key={i} className="wd-tag">{cat}</span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Description */}
+                  <p className="wd-card-desc">{getDescription(scheme)}…</p>
+
+                  {/* Benefit amount */}
+                  {(scheme.amount || scheme.benefits_md) && (
+                    <div className="wd-benefit-row">
+                      <span className="wd-benefit-label">Benefit</span>
+                      <span className="wd-benefit-val">
+                        {(scheme.amount || scheme.benefits_md || '')
+                          .replace(/[#*`]/g, '')
+                          .substring(0, 120)}
                       </span>
                     </div>
-                    <div className="app-details">
-                      <p><strong>Application ID:</strong> {app.id}</p>
-                      <p><strong>Applied On:</strong> {app.appliedDate}</p>
-                      <p><strong>Last Updated:</strong> {app.lastUpdated}</p>
+                  )}
+
+                  {/* Why you qualify */}
+                  {eligibility.matchedCriteria.length > 0 && (
+                    <div className="wd-criteria">
+                      <p className="wd-criteria-label">Why you qualify:</p>
+                      <ul>
+                        {eligibility.matchedCriteria.slice(0, 3).map((c, i) => (
+                          <li key={i} className="wd-criteria-item wd-criteria-pass">✓ {c}</li>
+                        ))}
+                      </ul>
                     </div>
-                    <button className="track-btn">Track Application</button>
-                  </div>
-                ))}
+                  )}
+
+                  {/* Expandable: Eligibility */}
+                  {scheme.eligibility_md && (
+                    <details
+                      className="wd-expander"
+                      open={expanded === scheme._id + '_elig'}
+                      onToggle={(e) =>
+                        setExpanded(
+                          (e.target as HTMLDetailsElement).open
+                            ? scheme._id + '_elig'
+                            : null,
+                        )
+                      }
+                    >
+                      <summary>Eligibility Criteria</summary>
+                      <p className="wd-expander-body">
+                        {scheme.eligibility_md.replace(/[#*`]/g, '').substring(0, 500)}…
+                      </p>
+                    </details>
+                  )}
+
+                  {/* Expandable: How to Apply */}
+                  {scheme.applicationProcess_md && (
+                    <details className="wd-expander">
+                      <summary>How to Apply</summary>
+                      <p className="wd-expander-body">
+                        {scheme.applicationProcess_md.replace(/[#*`]/g, '').substring(0, 500)}…
+                      </p>
+                    </details>
+                  )}
+
+                  {/* Apply button */}
+                  <button
+                    className="wd-apply-btn"
+                    onClick={() =>
+                      window.open(getApplyUrl(scheme), '_blank', 'noopener,noreferrer')
+                    }
+                  >
+                    Apply on Official Website ↗
+                  </button>
+                </div>
               </div>
-            ) : (
-              <div className="empty-state">
-                <p>You haven't applied to any schemes yet.</p>
-                <p>Browse recommended schemes and start applying!</p>
-              </div>
-            )}
+            ))}
           </div>
         )}
-      </div>
+
+        {/* Empty — filter but schemes exist */}
+        {!loading && !error && filtered.length === 0 && schemes.length > 0 && (
+          <div className="wd-empty">
+            <div className="wd-empty-icon">📋</div>
+            <h3>No {activeFilter !== 'all' ? activeFilter : ''} schemes found</h3>
+            <p>Switch to "All" to see every matched scheme.</p>
+            <button className="wd-retry-btn" onClick={() => setActiveFilter('all')}>
+              Show All
+            </button>
+          </div>
+        )}
+
+        {/* Empty — nothing matched at all */}
+        {!loading && !error && schemes.length === 0 && (
+          <div className="wd-empty">
+            <div className="wd-empty-icon">🌱</div>
+            <h3>No schemes matched yet</h3>
+            <p>
+              Complete your profile to get personalised matches. You can also use WhatsApp to
+              answer our 8-question survey and receive an instant personalised link.
+            </p>
+          </div>
+        )}
+
+      </main>
+
+      <footer className="wd-footer">
+        <p>Powered by YojanaMitra · Data from MyScheme.gov.in</p>
+      </footer>
     </div>
   );
 }

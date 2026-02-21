@@ -1,103 +1,129 @@
 import { useState, useEffect } from 'react';
 import '../styles/PersonalizedDashboard.css';
 
-interface EligibleScheme {
-  scheme: {
-    _id: string;
-    name: string;
-    category: any[];
-    level: string;
-    state: string | null;
-    description: string;
-    description_md?: string;
-    amount: string;
-    applyUrl: string;
-  };
-  eligibility: {
-    isEligible: boolean;
-    matchScore: number;
-    matchedCriteria: string[];
-    unmatchedCriteria: string[];
-    warnings: string[];
-  };
-}
-
-interface UserProfile {
+interface Scheme {
+  _id: string;
   name: string;
-  phone?: string;
-  state: string;
-  district: string;
-  landSize: number;
-  cropType: string;
-  farmerCategory: string;
+  level?: string;
+  state?: string | null;
+  category?: any[];
+  tags?: any[];
+  description_md?: string;
+  benefits_md?: string;
+  eligibility_md?: string;
+  applicationProcess_md?: string;
+  documentsRequired_md?: string;
+  applyUrl?: string;
+  amount?: string;
+  basicDetails?: any;
 }
 
-export default function PersonalizedDashboard() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get('token');
-  
+interface PersonalizedDashboardProps {
+  token: string;
+}
+
+export default function PersonalizedDashboard({ token }: PersonalizedDashboardProps) {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [schemes, setSchemes] = useState<EligibleScheme[]>([]);
+  const [schemes, setSchemes] = useState<Scheme[]>([]);
+  const [view, setView] = useState('all');
   const [error, setError] = useState('');
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
-    if (token) {
-      fetchEligibleSchemes(token);
-    } else {
-      setError('Invalid access. Please use the link sent to your WhatsApp.');
-      setLoading(false);
-    }
+    fetchSchemes();
   }, [token]);
 
-  const fetchEligibleSchemes = async (token: string) => {
+  const fetchSchemes = async () => {
     try {
       setLoading(true);
-      // TODO: Replace with actual API endpoint that uses token
-      const response = await fetch(
-        `http://localhost:5000/api/schemes/eligible?token=${token}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        }
-      );
-
+      const response = await fetch(`http://localhost:5000/api/session/${token}`);
       const data = await response.json();
+
       if (data.success) {
-        setUser(data.data.user || null);
-        setSchemes(data.data.schemes || []);
+        setSchemes(data.schemes || []);
+        setView(data.view || 'all');
       } else {
-        setError(data.message || 'Failed to load schemes');
+        setError(data.message || 'Session not found or expired.');
       }
-    } catch (error) {
-      console.error('Error fetching schemes:', error);
-      setError('Failed to load your personalized schemes. Please try again later.');
+    } catch {
+      setError('Could not connect to server. Please try again later.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleViewDetails = (applyUrl: string) => {
-    if (applyUrl) {
-      window.open(applyUrl, '_blank', 'noopener,noreferrer');
-    }
+  const getDescription = (scheme: Scheme): string => {
+    const text = scheme.description_md || '';
+    return text.length > 200 ? text.substring(0, 200) + '...' : text || 'Government welfare scheme.';
   };
 
-  const getMatchScoreColor = (score: number) => {
-    if (score >= 80) return '#10b981'; // Green
-    if (score >= 60) return '#3b82f6'; // Blue
-    if (score >= 40) return '#f59e0b'; // Orange
-    return '#ef4444'; // Red
+  const getBenefits = (scheme: Scheme): string => {
+    return scheme.benefits_md || scheme.amount || '';
+  };
+
+  const getCategories = (scheme: Scheme): string[] => {
+    if (!scheme.category || !Array.isArray(scheme.category)) return [];
+    return scheme.category
+      .slice(0, 3)
+      .map((c: any) => (typeof c === 'string' ? c : c?.schemeCategoryName || c?.label || ''))
+      .filter(Boolean);
+  };
+
+  const getApplyUrl = (scheme: Scheme): string => {
+    return scheme.applyUrl ||
+      scheme.basicDetails?.schemeUrl ||
+      scheme.basicDetails?.applyUrl ||
+      `https://www.myscheme.gov.in/schemes/${scheme._id}`;
+  };
+
+  const viewLabel: Record<string, string> = {
+    schemes: 'Eligible Schemes',
+    insurance: 'Insurance Schemes',
+    financial: 'Financial Support',
+    all: 'Personalized Schemes',
   };
 
   if (error) {
     return (
       <div className="personalized-dashboard">
-        <div className="error-container">
-          <div className="error-icon">⚠️</div>
-          <h2>Access Error</h2>
-          <p>{error}</p>
+        <header className="dashboard-header">
+          <div className="header-logo">
+            <img src="/logo.png" alt="Yojna Mitra" className="logo-img" />
+            <h1 className="logo-text">Yojna Mitra</h1>
+          </div>
+        </header>
+        <div className="dashboard-container">
+          <div className="empty-state pd-error-card">
+            <div className="empty-icon">⏳</div>
+            <h3>Link Expired or Invalid</h3>
+            <p>{error}</p>
+            <p className="pd-error-options-label">Get your schemes in two ways:</p>
+            <div className="pd-error-options">
+              <div className="pd-option">
+                <span className="pd-option-icon">💻</span>
+                <div>
+                  <strong>Sign up on the website</strong>
+                  <p>Create a free account to access your personalised dashboard anytime.</p>
+                  <a href="/" className="pd-option-link">Go to YojanaMitra.in →</a>
+                </div>
+              </div>
+              <div className="pd-option">
+                <span className="pd-option-icon">💬</span>
+                <div>
+                  <strong>WhatsApp — get a fresh link</strong>
+                  <p>Send <strong>"Hi"</strong> to our bot to re-run the quiz and receive a new link.</p>
+                  <a
+                    href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_BOT_NUMBER || ''}?text=Hi`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="pd-option-link pd-option-wa"
+                  >
+                    Open WhatsApp →
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -111,101 +137,87 @@ export default function PersonalizedDashboard() {
           <img src="/logo.png" alt="Yojna Mitra" className="logo-img" />
           <h1 className="logo-text">Yojna Mitra</h1>
         </div>
-        {user && (
-          <div className="user-info">
-            <h2>Welcome, {user.name}!</h2>
-            <p className="user-details">
-              {user.district}, {user.state} • {user.cropType} • {user.landSize} acres
-            </p>
-          </div>
-        )}
+        <div className="header-subtitle">
+          <p>{viewLabel[view] || 'Your Schemes'}</p>
+        </div>
       </header>
 
       <div className="dashboard-container">
         {loading ? (
           <div className="loading-state">
             <div className="loader"></div>
-            <p>Finding schemes matched to your profile...</p>
+            <p>Loading your matched schemes...</p>
           </div>
         ) : schemes.length > 0 ? (
           <>
             <div className="schemes-header">
-              <h2>🎯 Your Personalized Schemes</h2>
+              <h2>Your Matched Schemes</h2>
               <p className="schemes-count">
-                We found <strong>{schemes.length}</strong> schemes matching your profile
+                <strong>{schemes.length}</strong> schemes matched to your profile
               </p>
             </div>
 
             <div className="schemes-grid">
-              {schemes.map(({ scheme, eligibility }) => (
+              {schemes.map((scheme) => (
                 <div key={scheme._id} className="scheme-card">
-                  <div className="match-score-badge" style={{ backgroundColor: getMatchScoreColor(eligibility.matchScore) }}>
-                    {eligibility.matchScore}% Match
-                  </div>
 
                   <div className="scheme-header">
                     <h3 className="scheme-name">{scheme.name}</h3>
-                    {scheme.level && (
-                      <span className="scheme-level">{scheme.level}</span>
-                    )}
+                    <div className="scheme-badges">
+                      {scheme.level && <span className="scheme-level">{scheme.level}</span>}
+                      {scheme.state && <span className="scheme-state">{scheme.state}</span>}
+                    </div>
                   </div>
 
-                  {scheme.category && Array.isArray(scheme.category) && scheme.category.length > 0 && (
+                  {getCategories(scheme).length > 0 && (
                     <div className="scheme-tags">
-                      {scheme.category.slice(0, 3).map((cat: any, idx: number) => (
-                        <span key={idx} className="tag">
-                          {typeof cat === 'string' ? cat : cat.schemeCategoryName || 'General'}
-                        </span>
+                      {getCategories(scheme).map((cat, idx) => (
+                        <span key={idx} className="tag">{cat}</span>
                       ))}
                     </div>
                   )}
 
-                  <p className="scheme-desc">
-                    {scheme.description?.substring(0, 150) ||
-                     scheme.description_md?.substring(0, 150) ||
-                     'Government welfare scheme'}
-                    {((scheme.description?.length ?? 0) > 150 || (scheme.description_md?.length ?? 0) > 150) && '...'}
-                  </p>
+                  <p className="scheme-desc">{getDescription(scheme)}</p>
 
-                  {scheme.amount && (
+                  {getBenefits(scheme) && (
                     <div className="scheme-benefit">
                       <span className="benefit-label">Benefit:</span>
-                      <span className="benefit-value">{scheme.amount}</span>
+                      <span className="benefit-value">
+                        {getBenefits(scheme).replace(/[#*`]/g, '').substring(0, 120)}
+                      </span>
                     </div>
                   )}
 
-                  {eligibility.matchedCriteria.length > 0 && (
-                    <div className="eligibility-info">
-                      <h4>✓ Why You Qualify:</h4>
-                      <ul className="criteria-list">
-                        {eligibility.matchedCriteria.slice(0, 3).map((criteria, idx) => (
-                          <li key={idx} className="matched-criteria">
-                            {criteria}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                  {/* Expandable details */}
+                  {scheme.eligibility_md && (
+                    <details
+                      className="scheme-details-section"
+                      open={expanded === scheme._id + '_elig'}
+                      onToggle={(e) =>
+                        setExpanded((e.target as HTMLDetailsElement).open ? scheme._id + '_elig' : null)
+                      }
+                    >
+                      <summary>Eligibility Criteria</summary>
+                      <p className="details-content">
+                        {scheme.eligibility_md.replace(/[#*`]/g, '').substring(0, 400)}...
+                      </p>
+                    </details>
                   )}
 
-                  {eligibility.unmatchedCriteria.length > 0 && (
-                    <details className="limitations">
-                      <summary>⚠️ Limitations ({eligibility.unmatchedCriteria.length})</summary>
-                      <ul className="criteria-list">
-                        {eligibility.unmatchedCriteria.map((criteria, idx) => (
-                          <li key={idx} className="unmatched-criteria">
-                            {criteria}
-                          </li>
-                        ))}
-                      </ul>
+                  {scheme.applicationProcess_md && (
+                    <details className="scheme-details-section">
+                      <summary>How to Apply</summary>
+                      <p className="details-content">
+                        {scheme.applicationProcess_md.replace(/[#*`]/g, '').substring(0, 400)}...
+                      </p>
                     </details>
                   )}
 
                   <button
                     className="btn-apply"
-                    onClick={() => handleViewDetails(scheme.applyUrl)}
-                    disabled={!scheme.applyUrl}
+                    onClick={() => window.open(getApplyUrl(scheme), '_blank', 'noopener,noreferrer')}
                   >
-                    Apply Now →
+                    Apply on Official Website
                   </button>
                 </div>
               ))}
@@ -215,20 +227,38 @@ export default function PersonalizedDashboard() {
           <div className="empty-state">
             <div className="empty-icon">📋</div>
             <h3>No Matching Schemes Found</h3>
-            <p>We couldn't find any schemes matching your current profile.</p>
-            <p className="help-text">
-              Our team will review your profile and update you if new schemes become available.
-            </p>
+            <p>No schemes matched your current profile.</p>
+            <div className="pd-error-options" style={{marginTop:'1.5rem'}}>
+              <div className="pd-option">
+                <span className="pd-option-icon">💬</span>
+                <div>
+                  <strong>Update profile on WhatsApp</strong>
+                  <p>Send <strong>"Hi"</strong> and select "Update Profile" to re-answer the questions.</p>
+                  <a
+                    href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_BOT_NUMBER || ''}?text=Hi`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="pd-option-link pd-option-wa"
+                  >
+                    Open WhatsApp →
+                  </a>
+                </div>
+              </div>
+              <div className="pd-option">
+                <span className="pd-option-icon">💻</span>
+                <div>
+                  <strong>Try signing up on the website</strong>
+                  <p>Use our web app to fill your full profile and get instant scheme matches.</p>
+                  <a href="/" className="pd-option-link">Go to YojanaMitra.in →</a>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
 
-      {/* Footer */}
       <footer className="dashboard-footer">
-        <p>Powered by Yojna Mitra</p>
-        <p className="footer-note">
-          These schemes are curated based on your profile. For official information, visit the respective scheme websites.
-        </p>
+        <p>Powered by Yojna Mitra • Data from MyScheme.gov.in</p>
       </footer>
     </div>
   );

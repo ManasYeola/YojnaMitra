@@ -5,25 +5,25 @@ import SignInPage from './components/SignInPage';
 import SignUpPage from './components/SignUpPage';
 import FarmerForm from './components/FarmerForm';
 import Dashboard from './components/Dashboard';
-import FindSchemes from './components/FindSchemes';
 import PersonalizedDashboard from './components/PersonalizedDashboard';
 import authService from './services/auth.service';
 import type { Farmer } from './types';
 
-type AppView = 'landing' | 'signin' | 'signup' | 'form' | 'dashboard' | 'findSchemes';
+type AppView = 'landing' | 'signin' | 'signup' | 'form' | 'dashboard';
 
 function App() {
   const [currentView, setCurrentView] = useState<AppView>('landing');
   const [currentFarmer, setCurrentFarmer] = useState<Farmer | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Check if this is a personalized dashboard link (token in URL)
-  const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get('token');
+  // Check if this is a personalized dashboard link (/session/{token})
+  const pathParts = window.location.pathname.split('/');
+  const sessionIdx = pathParts.indexOf('session');
+  const sessionToken = sessionIdx !== -1 ? pathParts[sessionIdx + 1] : null;
 
-  // If token exists, show PersonalizedDashboard
-  if (token) {
-    return <PersonalizedDashboard />;
+  // If token exists in path, show PersonalizedDashboard
+  if (sessionToken) {
+    return <PersonalizedDashboard token={sessionToken} />;
   }
 
   // Check if user is already authenticated on mount (but don't auto-redirect)
@@ -114,14 +114,6 @@ function App() {
     setCurrentView('landing');
   };
 
-  const handleFindSchemes = () => {
-    setCurrentView('findSchemes');
-  };
-
-  const handleBackToDashboard = () => {
-    setCurrentView('dashboard');
-  };
-
   // Render based on current view
   if (currentView === 'landing') {
     return (
@@ -154,15 +146,7 @@ function App() {
   if (currentView === 'dashboard' && currentFarmer) {
     return (
       <div className="app">
-        <Dashboard farmer={currentFarmer} onLogout={handleLogout} onFindSchemes={handleFindSchemes} />
-      </div>
-    );
-  }
-
-  if (currentView === 'findSchemes') {
-    return (
-      <div className="app">
-        <FindSchemes onBack={handleBackToDashboard} />
+        <Dashboard farmer={currentFarmer} onLogout={handleLogout} />
       </div>
     );
   }

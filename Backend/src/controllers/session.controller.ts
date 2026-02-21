@@ -75,6 +75,8 @@ export const getSession = async (req: Request, res: Response): Promise<void> => 
             documentsRequired_md: 1,
             documents: 1,
             basicDetails: 1,
+            applyUrl: 1,
+            amount: 1,
           },
         },
       )
