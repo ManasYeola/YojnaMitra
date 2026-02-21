@@ -125,11 +125,11 @@ export const getRecommendedSchemes = async (
       // Crop matching (25 points)
       if (
         !scheme.eligibility?.crops ||
-        scheme.eligibility.crops.length === 0 ||
-        scheme.eligibility.crops.includes(user.cropType ?? '')
+        scheme.eligibility?.crops.length === 0 ||
+        scheme.eligibility?.crops.includes(user.cropType ?? '')
       ) {
         score += 25;
-        if (scheme.eligibility?.crops && scheme.eligibility.crops.includes(user.cropType ?? '')) {
+        if (scheme.eligibility?.crops && scheme.eligibility?.crops.includes(user.cropType ?? '')) {
           matchReasons.push(`Suitable for ${user.cropType} farmers`);
         }
       }
@@ -137,7 +137,7 @@ export const getRecommendedSchemes = async (
       // Farmer category matching (25 points)
       if (
         !scheme.eligibility?.farmerCategory ||
-        scheme.eligibility.farmerCategory.includes(user.farmerCategory ?? '')
+        scheme.eligibility?.farmerCategory.includes(user.farmerCategory ?? '')
       ) {
         score += 25;
         matchReasons.push(`Designed for ${user.farmerCategory} farmers`);
@@ -145,7 +145,7 @@ export const getRecommendedSchemes = async (
 
       // Land size matching (20 points total)
       if (scheme.eligibility?.minLandSize !== undefined) {
-        if ((user.landSize ?? 0) >= scheme.eligibility.minLandSize) {
+        if ((user.landSize ?? 0) >= (scheme.eligibility?.minLandSize ?? 0)) {
           score += 10;
           matchReasons.push('Meets minimum land requirement');
         }
@@ -154,7 +154,7 @@ export const getRecommendedSchemes = async (
       }
 
       if (scheme.eligibility?.maxLandSize !== undefined) {
-        if ((user.landSize ?? Infinity) <= scheme.eligibility.maxLandSize) {
+        if ((user.landSize ?? Infinity) <= (scheme.eligibility?.maxLandSize ?? Infinity)) {
           score += 10;
           matchReasons.push('Within land size limit');
         }

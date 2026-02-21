@@ -35,8 +35,8 @@ export interface IUser extends Document {
 // Scheme Types
 export type SchemeCategory = 'insurance' | 'subsidy' | 'loan' | 'training' | 'equipment';
 
-export interface IScheme extends Document {
-  _id: any; // Slug-based ID from sync-service (string slug, not ObjectId)
+export interface IScheme extends Omit<Document, '_id'> {
+  _id: string; // Slug-based ID from sync-service
   slug?: string;
   apiId?: string;
   name: string;

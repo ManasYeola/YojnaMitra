@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+// All states the conversation can be in
 export type SessionState =
   | 'new'
   | 'ask_name'
@@ -11,10 +12,10 @@ export type SessionState =
   | 'q6_income'
   | 'q7_bpl'
   | 'q8_special'
-  | 'menu'
-  | 'complete';
+  | 'complete'
+  | 'menu';
 
-export interface IAnswers {
+export interface ISessionAnswers {
   name?:          string;
   state?:         string;
   farmerType?:    string;
@@ -28,9 +29,9 @@ export interface IAnswers {
 export interface IWhatsAppSession extends Document {
   phone:          string;
   state:          SessionState;
-  answers:        IAnswers;
-  userId?:        string;
+  answers:        ISessionAnswers;
   lastActivityAt: Date;
+  userId?:        string;
   createdAt:      Date;
   updatedAt:      Date;
 }
@@ -45,20 +46,19 @@ const whatsAppSessionSchema = new Schema<IWhatsAppSession>(
     },
     state: {
       type: String,
-      enum: ['new', 'ask_name', 'q1_state', 'q2_farmer_type', 'q3_land', 'q4_age', 'q5_caste', 'q6_income', 'q7_bpl', 'q8_special', 'menu', 'complete'],
+      enum: ['new','ask_name','q1_state','q2_farmer_type','q3_land','q4_age','q5_caste','q6_income','q7_bpl','q8_special','complete','menu'],
       default: 'new',
     },
     answers: {
       type: Schema.Types.Mixed,
       default: {},
     },
-    userId: {
-      type: String,
-      default: '',
-    },
     lastActivityAt: {
       type: Date,
       default: Date.now,
+    },
+    userId: {
+      type: String,
     },
   },
   {
@@ -66,9 +66,9 @@ const whatsAppSessionSchema = new Schema<IWhatsAppSession>(
   }
 );
 
-// Auto-delete sessions older than 24 hours
+// Auto-delete sessions after 24 hours of inactivity
 whatsAppSessionSchema.index({ lastActivityAt: 1 }, { expireAfterSeconds: 86400 });
 
-const WhatsAppSession = mongoose.model<IWhatsAppSession>('WhatsAppSession', whatsAppSessionSchema);
+const WhatsappSession = mongoose.model<IWhatsAppSession>('WhatsappSession', whatsAppSessionSchema);
 
-export default WhatsAppSession;
+export default WhatsappSession;
