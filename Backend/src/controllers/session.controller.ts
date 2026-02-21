@@ -63,6 +63,7 @@ export const getSession = async (req: Request, res: Response): Promise<void> => 
         {
           projection: {
             _id: 1,
+            slug: 1,
             name: 1,
             level: 1,
             state: 1,
@@ -75,6 +76,8 @@ export const getSession = async (req: Request, res: Response): Promise<void> => 
             documentsRequired_md: 1,
             documents: 1,
             basicDetails: 1,
+            applyUrl: 1,
+            amount: 1,
           },
         },
       )

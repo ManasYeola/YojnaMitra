@@ -3,6 +3,7 @@ import '../styles/PersonalizedDashboard.css';
 
 interface Scheme {
   _id: string;
+  slug?: string;
   name: string;
   category?: any[];
   level?: string;
@@ -16,6 +17,114 @@ interface Scheme {
   amount?: string;
   applyUrl?: string;
   basicDetails?: any;
+}
+
+const AGRICULTURE_CAT = 'Agriculture,Rural & Environment';
+
+/** Decode HTML entities like &amp; &quot; &#x27; etc. from raw DB text.
+ *  Loops until stable to handle double-encoded strings (e.g. &amp;quot; → &quot; → "). */
+function decodeHtml(text: string): string {
+  if (!text) return '';
+  const txt = document.createElement('textarea');
+  let decoded = text;
+  for (let i = 0; i < 3; i++) {
+    txt.innerHTML = decoded;
+    const next = txt.value;
+    if (next === decoded) break; // stable — no more entities
+    decoded = next;
+  }
+  return decoded;
+}
+
+/** Extract the display name from a category entry (string or object) */
+function getCatName(cat: any): string {
+  return typeof cat === 'string' ? cat : cat?.schemeCategoryName || 'General';
+}
+
+/**
+ * Returns the "primary grouping category" for a scheme:
+ * — the first non-Agriculture category, or AGRICULTURE_CAT if all are Agriculture.
+ */
+function getPrimaryCategory(scheme: Scheme): string {
+  if (!scheme.category || scheme.category.length === 0) return 'Other';
+  const nonAgri = scheme.category
+    .map(getCatName)
+    .find((c) => c !== AGRICULTURE_CAT);
+  return nonAgri ?? AGRICULTURE_CAT;
+}
+
+/**
+ * Groups schemes by primary category.
+ * Agriculture always appears last (it's the catch-all fallback).
+ */
+function groupSchemes(schemes: Scheme[]): { category: string; schemes: Scheme[] }[] {
+  const map = new Map<string, Scheme[]>();
+
+  for (const scheme of schemes) {
+    const cat = getPrimaryCategory(scheme);
+    if (!map.has(cat)) map.set(cat, []);
+    map.get(cat)!.push(scheme);
+  }
+
+  // Sort: Agriculture last, rest alphabetically
+  return Array.from(map.entries())
+    .sort(([a], [b]) => {
+      if (a === AGRICULTURE_CAT) return 1;
+      if (b === AGRICULTURE_CAT) return -1;
+      return a.localeCompare(b);
+    })
+    .map(([category, schemes]) => ({ category, schemes }));
+}
+
+/** Build the MyScheme apply URL from slug. Falls back to _id (which is also the slug). */
+function getApplyUrl(scheme: Scheme): string {
+  const slug = scheme.slug || scheme._id;
+  return `https://www.myscheme.gov.in/schemes/${slug}`;
+}
+
+/** Small card component — keeps category chips intact */
+function SchemeCard({ scheme }: { scheme: Scheme }) {
+  const rawDesc = scheme.description_md || scheme.description || 'Government welfare scheme';
+  const cleanDesc = decodeHtml(rawDesc);
+  const descText = cleanDesc.substring(0, 150);
+  const isTruncated = cleanDesc.length > 150;
+
+  return (
+    <div className="scheme-card">
+      <div className="card-body">
+        <div className="scheme-header">
+          <h3 className="scheme-name">{decodeHtml(scheme.name)}</h3>
+          {scheme.level && <span className="scheme-level">{scheme.level}</span>}
+        </div>
+
+        {scheme.category && Array.isArray(scheme.category) && scheme.category.length > 0 && (
+          <div className="scheme-tags">
+            {scheme.category.slice(0, 3).map((cat: any, idx: number) => (
+              <span key={idx} className="tag">{getCatName(cat)}</span>
+            ))}
+          </div>
+        )}
+
+        <p className="scheme-desc">
+          {descText}{isTruncated && '...'}
+        </p>
+
+        {scheme.amount && (
+          <div className="scheme-benefit">
+            <span className="benefit-label">Benefit:</span>
+            <span className="benefit-value">{decodeHtml(scheme.amount)}</span>
+          </div>
+        )}
+      </div>
+
+      <button
+        className="btn-apply"
+        onClick={() => window.open(getApplyUrl(scheme), '_blank', 'noopener,noreferrer')}
+      >
+        Apply Now →
+      </button>
+    </div>
+  );
 }
 
 export default function PersonalizedDashboard() {
@@ -38,13 +147,23 @@ export default function PersonalizedDashboard() {
   const fetchEligibleSchemes = async (token: string) => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `http://localhost:5000/api/session/${token}`
-      );
 
+      // Check sessionStorage cache first (clears when tab closes)
+      const cacheKey = `session_${token}`;
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) {
+        setSchemes(JSON.parse(cached));
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch(`/api/session/${token}`);
       const data = await response.json();
+
       if (data.success) {
-        setSchemes(data.schemes || []);
+        const schemes = data.schemes || [];
+        setSchemes(schemes);
+        sessionStorage.setItem(cacheKey, JSON.stringify(schemes));
       } else {
         setError(data.message || 'Failed to load schemes');
       }
@@ -67,6 +186,8 @@ export default function PersonalizedDashboard() {
       </div>
     );
   }
+
+  const groups = groupSchemes(schemes);
 
   return (
     <div className="personalized-dashboard">
@@ -97,48 +218,19 @@ export default function PersonalizedDashboard() {
               </p>
             </div>
 
-            <div className="schemes-grid">
-              {schemes.map((scheme) => (
-                <div key={scheme._id} className="scheme-card">
-                  <div className="scheme-header">
-                    <h3 className="scheme-name">{scheme.name}</h3>
-                    {scheme.level && (
-                      <span className="scheme-level">{scheme.level}</span>
-                    )}
-                  </div>
-
-                  {scheme.category && Array.isArray(scheme.category) && scheme.category.length > 0 && (
-                    <div className="scheme-tags">
-                      {scheme.category.slice(0, 3).map((cat: any, idx: number) => (
-                        <span key={idx} className="tag">
-                          {typeof cat === 'string' ? cat : cat.schemeCategoryName || 'General'}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  <p className="scheme-desc">
-                    {(scheme.description_md || scheme.description || 'Government welfare scheme').substring(0, 150)}
-                    {((scheme.description_md?.length ?? 0) > 150 || (scheme.description?.length ?? 0) > 150) && '...'}
-                  </p>
-
-                  {scheme.amount && (
-                    <div className="scheme-benefit">
-                      <span className="benefit-label">Benefit:</span>
-                      <span className="benefit-value">{scheme.amount}</span>
-                    </div>
-                  )}
-
-                  <button
-                    className="btn-apply"
-                    onClick={() => scheme.applyUrl && window.open(scheme.applyUrl, '_blank', 'noopener,noreferrer')}
-                    disabled={!scheme.applyUrl}
-                  >
-                    Apply Now →
-                  </button>
+            {groups.map(({ category, schemes: groupSchemes }) => (
+              <section key={category} className="scheme-group">
+                <div className="scheme-group-heading">
+                  <h3 className="scheme-group-title">{category}</h3>
+                  <span className="scheme-group-count">{groupSchemes.length} scheme{groupSchemes.length !== 1 ? 's' : ''}</span>
                 </div>
-              ))}
-            </div>
+                <div className="schemes-grid">
+                  {groupSchemes.map((scheme) => (
+                    <SchemeCard key={scheme._id} scheme={scheme} />
+                  ))}
+                </div>
+              </section>
+            ))}
           </>
         ) : (
           <div className="empty-state">

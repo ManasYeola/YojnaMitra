@@ -111,12 +111,26 @@ function extractPhone(from: string): string {
 
 /**
  * Run matching engine → persist results in UserSession → return shareable link.
- * Safe to call multiple times; creates a fresh session each time.
+ * Reuses an existing valid session for the same phone + view if one exists,
+ * so the matching engine is not re-run on every menu tap.
  */
 async function createSessionLink(
   user: InstanceType<typeof User>,
   view: 'schemes' | 'insurance' | 'financial' | 'all' = 'all',
 ): Promise<string> {
+
+  // ── Cache check: reuse existing valid session for this phone + view ──
+  const existing = await UserSession.findOne({
+    phone:     user.phone,
+    view,
+    expiresAt: { $gt: new Date() },
+  }).sort({ createdAt: -1 });
+
+  if (existing) {
+    return `${FRONTEND_URL}?token=${existing.token}`;
+  }
+
+  // ── No valid session — run matching engine and create a new one ──
   const profile: UserProfile = {
     state:           user.state,
     farmerType:      user.farmerType,
@@ -379,6 +393,9 @@ async function handleState(
           { $set: profileData },
           { upsert: true, new: true, runValidators: true }
         );
+
+        // Invalidate any cached sessions so the next request re-runs matching
+        await UserSession.deleteMany({ phone });
 
         // Run matching engine + create session link
         const link = await createSessionLink(user!, 'all');
