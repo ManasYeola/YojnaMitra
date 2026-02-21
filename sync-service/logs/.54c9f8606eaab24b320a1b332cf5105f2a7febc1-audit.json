@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 30
+    },
+    "auditLog": "C:\\Users\\manas\\Aissms\\sync-service\\logs\\.54c9f8606eaab24b320a1b332cf5105f2a7febc1-audit.json",
+    "files": [
+        {
+            "date": 1771619250642,
+            "name": "C:\\Users\\manas\\Aissms\\sync-service\\logs\\error-2026-02-21.log",
+            "hash": "e3bd8ded0b407b50c2cc3d2f85e0fb3a7095f068c35ffe7ff3fee2ff9b72f41f"
+        }
+    ],
+    "hashType": "sha256"
+}

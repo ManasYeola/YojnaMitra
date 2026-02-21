@@ -253,8 +253,8 @@ function AuthPage({ onAuthSuccess, onBack }: AuthPageProps) {
               <button type="submit" className="btn-submit" disabled={loading || otp.length !== 6}>
                 {loading ? 'Verifying...' : 'Verify OTP'}
               </button>
-              <button type="button" className="btn-text" onClick={() => setStep('phone')}>
-                Change phone number
+              <button type="button" className="btn-text" onClick={() => setStep('input')}>
+                Change {authMethod === 'email' ? 'email' : 'phone number'}
               </button>
             </form>
           )}

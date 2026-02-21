@@ -5,17 +5,28 @@ import SignInPage from './components/SignInPage';
 import SignUpPage from './components/SignUpPage';
 import FarmerForm from './components/FarmerForm';
 import Dashboard from './components/Dashboard';
+import FindSchemes from './components/FindSchemes';
+import PersonalizedDashboard from './components/PersonalizedDashboard';
 import authService from './services/auth.service';
 import type { Farmer } from './types';
 
-type AppView = 'landing' | 'signin' | 'signup' | 'form' | 'dashboard';
+type AppView = 'landing' | 'signin' | 'signup' | 'form' | 'dashboard' | 'findSchemes';
 
 function App() {
   const [currentView, setCurrentView] = useState<AppView>('landing');
   const [currentFarmer, setCurrentFarmer] = useState<Farmer | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Check if user is already authenticated on mount
+  // Check if this is a personalized dashboard link (token in URL)
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('token');
+
+  // If token exists, show PersonalizedDashboard
+  if (token) {
+    return <PersonalizedDashboard />;
+  }
+
+  // Check if user is already authenticated on mount (but don't auto-redirect)
   useEffect(() => {
     const authenticated = authService.isAuthenticated();
     setIsAuthenticated(authenticated);
@@ -23,7 +34,7 @@ function App() {
     if (authenticated) {
       const user = authService.getCurrentUser();
       if (user) {
-        // Convert backend user to frontend Farmer type
+        // Load user data but stay on landing page
         setCurrentFarmer({
           name: user.name || '',
           phone: user.phone,
@@ -32,7 +43,8 @@ function App() {
           landSize: user.landSize || 0,
           cropType: user.cropType || '',
         });
-        setCurrentView('dashboard');
+        // Don't auto-redirect - stay on landing page
+        // User can click "Continue" to go to dashboard
       }
     }
   }, []);
@@ -94,9 +106,25 @@ function App() {
     setCurrentView('landing');
   };
 
+  const handleFindSchemes = () => {
+    setCurrentView('findSchemes');
+  };
+
+  const handleBackToDashboard = () => {
+    setCurrentView('dashboard');
+  };
+
   // Render based on current view
   if (currentView === 'landing') {
-    return <LandingPage onGetStarted={handleGetStarted} onSignIn={handleSignIn} onSignUp={handleSignUp} />;
+    return (
+      <LandingPage 
+        onGetStarted={isAuthenticated ? () => setCurrentView('dashboard') : handleGetStarted} 
+        onSignIn={handleSignIn} 
+        onSignUp={handleSignUp}
+        isAuthenticated={isAuthenticated}
+        farmerName={currentFarmer?.name}
+      />
+    );
   }
 
   if (currentView === 'signin') {
@@ -118,7 +146,15 @@ function App() {
   if (currentView === 'dashboard' && currentFarmer) {
     return (
       <div className="app">
-        <Dashboard farmer={currentFarmer} onLogout={handleLogout} />
+        <Dashboard farmer={currentFarmer} onLogout={handleLogout} onFindSchemes={handleFindSchemes} />
+      </div>
+    );
+  }
+
+  if (currentView === 'findSchemes') {
+    return (
+      <div className="app">
+        <FindSchemes onBack={handleBackToDashboard} />
       </div>
     );
   }

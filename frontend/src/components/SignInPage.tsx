@@ -91,114 +91,119 @@ function SignInPage({ onAuthSuccess, onBack, onSwitchToSignUp }: SignInPageProps
   return (
     <div className="auth-page">
       <div className="auth-container">
-        <button className="back-button" onClick={onBack}>← Back to Home</button>
+        <button className="back-button" onClick={onBack}>←</button>
         
         <div className="auth-card">
-          <h1 className="auth-title">Sign In</h1>
-          <p className="auth-subtitle">
-            {step === 'input' 
-              ? 'Enter your credentials to sign in' 
-              : `Enter the OTP sent to your ${authMethod === 'email' ? 'email' : 'phone'}`}
-          </p>
+          {/* Logo */}
+          <div className="auth-logo-container">
+            <img src="/logo.png" alt="Yojana Mitra" className="auth-logo-img" />
+            <h2 className="auth-logo-text">Yojna Mitra</h2>
+          </div>
 
-          {error && <div className="auth-error">{error}</div>}
+          {/* Card Content Section */}
+          <div className="auth-card-content">
+            <h1 className="auth-title">Log In</h1>
 
-          {step === 'input' && (
-            <form onSubmit={handleSendOTP} className="auth-form">
-              {/* Auth Method Toggle */}
-              <div className="auth-method-toggle">
-                <button
-                  type="button"
-                  className={`toggle-btn ${authMethod === 'email' ? 'active' : ''}`}
-                  onClick={() => setAuthMethod('email')}
-                >
-                  📧 Email (FREE!)
+            {error && <div className="auth-error">{error}</div>}
+
+            {step === 'input' && (
+              <form onSubmit={handleSendOTP} className="auth-form">
+                {authMethod === 'email' ? (
+                  <div className="input-group">
+                    <label htmlFor="email">Email</label>
+                    <input
+                      type="email"
+                      id="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="johndoe@xyz.com"
+                      required
+                      disabled={loading}
+                    />
+                  </div>
+                ) : (
+                  <div className="input-group">
+                    <label htmlFor="phone">Phone Number</label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="Enter 10-digit number"
+                      pattern="[0-9]{10}"
+                      required
+                      disabled={loading}
+                    />
+                  </div>
+                )}
+
+                <div className="form-footer">
+                  <label className="remember-me">
+                    <input type="checkbox" />
+                    <span>Remember me</span>
+                  </label>
+                  <button type="button" className="link-button">Forgot password?</button>
+                </div>
+
+                <button type="submit" className="submit-button" disabled={loading}>
+                  {loading ? 'Sending OTP...' : 'Log In'}
                 </button>
-                <button
-                  type="button"
-                  className={`toggle-btn ${authMethod === 'phone' ? 'active' : ''}`}
-                  onClick={() => setAuthMethod('phone')}
-                >
-                  📱 Phone
-                </button>
-              </div>
 
-              {authMethod === 'email' ? (
-                <div className="form-group">
-                  <label htmlFor="email">Email Address</label>
+                {/* Auth Method Toggle */}
+                <div className="auth-method-toggle">
+                  <button
+                    type="button"
+                    className={`toggle-btn ${authMethod === 'email' ? 'active' : ''}`}
+                    onClick={() => setAuthMethod('email')}
+                  >
+                    Email
+                  </button>
+                  <button
+                    type="button"
+                    className={`toggle-btn ${authMethod === 'phone' ? 'active' : ''}`}
+                    onClick={() => setAuthMethod('phone')}
+                  >
+                    Phone
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {step === 'otp' && (
+              <form onSubmit={handleVerifyOTP} className="auth-form">
+                <div className="input-group">
+                  <label htmlFor="otp">OTP Code</label>
                   <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email address"
+                    type="text"
+                    id="otp"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    placeholder="Enter 6-digit OTP"
+                    pattern="[0-9]{6}"
+                    maxLength={6}
                     required
                     disabled={loading}
                   />
-                  <small>✅ No SMS charges! OTP sent to your email</small>
                 </div>
-              ) : (
-                <div className="form-group">
-                  <label htmlFor="phone">Phone Number</label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="Enter 10-digit phone number"
-                    pattern="[0-9]{10}"
-                    required
-                    disabled={loading}
-                  />
-                  <small>We'll send you an OTP via SMS</small>
-                </div>
-              )}
 
-              <button type="submit" className="auth-button" disabled={loading}>
-                {loading ? 'Sending OTP...' : 'Send OTP'}
-              </button>
-            </form>
-          )}
+                <button type="submit" className="submit-button" disabled={loading}>
+                  {loading ? 'Verifying...' : 'Verify OTP'}
+                </button>
 
-          {step === 'otp' && (
-            <form onSubmit={handleVerifyOTP} className="auth-form">
-              <div className="form-group">
-                <label htmlFor="otp">OTP</label>
-                <input
-                  type="text"
-                  id="otp"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  placeholder="Enter 6-digit OTP"
-                  pattern="[0-9]{6}"
-                  maxLength={6}
-                  required
+                <button 
+                  type="button" 
+                  className="link-button" 
+                  onClick={() => setStep('input')}
                   disabled={loading}
-                />
-              </div>
+                >
+                  ← Change Login Method
+                </button>
+              </form>
+            )}
 
-              <button type="submit" className="auth-button" disabled={loading}>
-                {loading ? 'Verifying...' : 'Verify OTP'}
-              </button>
-
-              <button 
-                type="button" 
-                className="auth-link-button" 
-                onClick={() => setStep('input')}
-                disabled={loading}
-              >
-                Change Login Method
-              </button>
-            </form>
-          )}
-
-          <div className="auth-footer">
-            <p>
-              Don't have an account?{' '}
-              <button className="auth-link-button" onClick={onSwitchToSignUp}>
-                Sign Up
-              </button>
-            </p>
+            <div className="auth-switch">
+              Don't have an account? <button className="link-btn" onClick={onSwitchToSignUp}>Sign Up</button>
+            </div>
           </div>
         </div>
       </div>

@@ -2609,3 +2609,204 @@
 {"level":"info","message":"  Duration : 1087.38s","service":"yojanamitra-sync","timestamp":"2026-02-21 01:43:11"}
 {"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 01:43:11"}
 {"level":"info","message":"Sync log persisted to `sync_logs` collection","service":"yojanamitra-sync","timestamp":"2026-02-21 01:43:11"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 01:57:30"}
+{"level":"info","message":"  YojanaMitra — Scheme Sync Started","service":"yojanamitra-sync","timestamp":"2026-02-21 01:57:30"}
+{"level":"info","message":"  Mode     : PRODUCTION","service":"yojanamitra-sync","timestamp":"2026-02-21 01:57:30"}
+{"level":"info","message":"  Category : Agriculture,Rural & Environment","service":"yojanamitra-sync","timestamp":"2026-02-21 01:57:30"}
+{"level":"info","message":"  Dry Run  : NO","service":"yojanamitra-sync","timestamp":"2026-02-21 01:57:30"}
+{"level":"info","message":"  Started: 2026-02-20T20:27:30.747Z","service":"yojanamitra-sync","timestamp":"2026-02-21 01:57:30"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 01:57:30"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 01:57:52"}
+{"level":"info","message":"  YojanaMitra — Scheme Sync Started","service":"yojanamitra-sync","timestamp":"2026-02-21 01:57:53"}
+{"level":"info","message":"  Mode     : TEST (5 schemes)","service":"yojanamitra-sync","timestamp":"2026-02-21 01:57:53"}
+{"level":"info","message":"  Category : Agriculture,Rural & Environment","service":"yojanamitra-sync","timestamp":"2026-02-21 01:57:53"}
+{"level":"info","message":"  Dry Run  : NO","service":"yojanamitra-sync","timestamp":"2026-02-21 01:57:53"}
+{"level":"info","message":"  Started: 2026-02-20T20:27:53.002Z","service":"yojanamitra-sync","timestamp":"2026-02-21 01:57:53"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 01:57:53"}
+{"level":"error","message":"Failed to connect to MongoDB: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:08"}
+{"level":"error","message":"Critical sync error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017","service":"yojanamitra-sync","stack":"MongooseServerSelectionError: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017\n    at _handleConnectionErrors (C:\\Users\\manas\\Aissms\\sync-service\\node_modules\\mongoose\\lib\\connection.js:1169:11)\n    at NativeConnection.openUri (C:\\Users\\manas\\Aissms\\sync-service\\node_modules\\mongoose\\lib\\connection.js:1100:11)\n    at async connectDB (C:\\Users\\manas\\Aissms\\sync-service\\src\\config\\db.js:32:18)\n    at async syncSchemes (C:\\Users\\manas\\Aissms\\sync-service\\src\\syncSchemes.js:192:7)","timestamp":"2026-02-21 01:58:08"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:08"}
+{"level":"info","message":"  Sync Summary","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:08"}
+{"level":"info","message":"  Status   : FAILED","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:08"}
+{"level":"info","message":"  Total    : 0","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:08"}
+{"level":"info","message":"  Synced   : 0","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:08"}
+{"level":"info","message":"  Failed   : 0","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:08"}
+{"level":"info","message":"  Duration : 15.04s","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:08"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:08"}
+{"level":"warn","message":"Could not persist sync log: Operation `sync_logs.insertOne()` buffering timed out after 10000ms","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:18"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:42"}
+{"level":"info","message":"  YojanaMitra — Scheme Sync Started","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:42"}
+{"level":"info","message":"  Mode     : TEST (5 schemes)","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:42"}
+{"level":"info","message":"  Category : Agriculture,Rural & Environment","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:42"}
+{"level":"info","message":"  Dry Run  : NO","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:42"}
+{"level":"info","message":"  Started: 2026-02-20T20:28:42.454Z","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:42"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:42"}
+{"level":"error","message":"Failed to connect to MongoDB: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:57"}
+{"level":"error","message":"Critical sync error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017","service":"yojanamitra-sync","stack":"MongooseServerSelectionError: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017\n    at _handleConnectionErrors (C:\\Users\\manas\\Aissms\\sync-service\\node_modules\\mongoose\\lib\\connection.js:1169:11)\n    at NativeConnection.openUri (C:\\Users\\manas\\Aissms\\sync-service\\node_modules\\mongoose\\lib\\connection.js:1100:11)\n    at async connectDB (C:\\Users\\manas\\Aissms\\sync-service\\src\\config\\db.js:32:18)\n    at async syncSchemes (C:\\Users\\manas\\Aissms\\sync-service\\src\\syncSchemes.js:192:7)","timestamp":"2026-02-21 01:58:57"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:57"}
+{"level":"info","message":"  Sync Summary","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:57"}
+{"level":"info","message":"  Status   : FAILED","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:57"}
+{"level":"info","message":"  Total    : 0","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:57"}
+{"level":"info","message":"  Synced   : 0","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:57"}
+{"level":"info","message":"  Failed   : 0","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:57"}
+{"level":"info","message":"  Duration : 15.06s","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:57"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 01:58:57"}
+{"level":"warn","message":"Could not persist sync log: Operation `sync_logs.insertOne()` buffering timed out after 10000ms","service":"yojanamitra-sync","timestamp":"2026-02-21 01:59:07"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:00"}
+{"level":"info","message":"  YojanaMitra — Scheme Sync Started","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:00"}
+{"level":"info","message":"  Mode     : TEST (5 schemes)","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:00"}
+{"level":"info","message":"  Category : Agriculture,Rural & Environment","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:00"}
+{"level":"info","message":"  Dry Run  : NO","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:00"}
+{"level":"info","message":"  Started: 2026-02-20T20:30:00.415Z","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:00"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:00"}
+{"level":"info","message":"MongoDB connected: ac-xpbjpdx-shard-00-00.0z8waq6.mongodb.net / YojnaMitra","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:01"}
+{"level":"info","message":"──── Fetching slugs [category=\"Agriculture,Rural & Environment\", limit=5] ────","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:01"}
+{"level":"info","message":"  Fetching page: offset=0","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:01"}
+{"level":"info","message":"  Total schemes reported by API: 827","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:01"}
+{"level":"info","message":"  Limit reached — collected 5 slugs (stopped early)","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:01"}
+{"level":"info","message":"──── Slug fetch complete: 5 slugs collected ────","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:01"}
+{"level":"info","message":"Processing 5 schemes (3 concurrent, 2000ms batch delay)…","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:01"}
+{"level":"info","message":"Batch 1/2 — slugs [0…2]","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:01"}
+{"level":"info","message":"  ✓ Synced: syss — \"Skilled Youth Startup Scheme\"","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:03"}
+{"level":"info","message":"  ✓ Synced: kbpyy — \"Krishak Bakri Palan Yojna\"","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:03"}
+{"level":"info","message":"  ✓ Synced: mmkssy-assam — \"Mukhya Mantri Krishi Sa Sajuli Yozana - Assam\"","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:03"}
+{"level":"info","message":"Batch 2/2 — slugs [3…4]","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:05"}
+{"level":"info","message":"  ✓ Synced: madilu — \"Madilu Kit\"","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:07"}
+{"level":"info","message":"  ✓ Synced: cctofp — \"Community Canning & Training On Fruit Preservation\"","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:07"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:07"}
+{"level":"info","message":"  Sync Summary","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:07"}
+{"level":"info","message":"  Status   : SUCCESS","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:07"}
+{"level":"info","message":"  Total    : 5","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:07"}
+{"level":"info","message":"  Synced   : 5","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:07"}
+{"level":"info","message":"  Failed   : 0","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:07"}
+{"level":"info","message":"  Duration : 6.95s","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:07"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:07"}
+{"level":"info","message":"Sync log persisted to `sync_logs` collection","service":"yojanamitra-sync","timestamp":"2026-02-21 02:00:07"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:55"}
+{"level":"info","message":"  YojanaMitra — Scheme Sync Started","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:55"}
+{"level":"info","message":"  Mode     : TEST (5 schemes)","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:55"}
+{"level":"info","message":"  Category : Agriculture,Rural & Environment","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:55"}
+{"level":"info","message":"  Dry Run  : NO","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:55"}
+{"level":"info","message":"  Started: 2026-02-20T20:31:55.499Z","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:55"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:55"}
+{"level":"info","message":"MongoDB connected: ac-xpbjpdx-shard-00-02.0z8waq6.mongodb.net / YojnaMitra","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:56"}
+{"level":"info","message":"──── Fetching slugs [category=\"Agriculture,Rural & Environment\", limit=5] ────","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:56"}
+{"level":"info","message":"  Fetching page: offset=0","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:56"}
+{"level":"info","message":"  Total schemes reported by API: 827","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:56"}
+{"level":"info","message":"  Limit reached — collected 5 slugs (stopped early)","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:56"}
+{"level":"info","message":"──── Slug fetch complete: 5 slugs collected ────","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:56"}
+{"level":"info","message":"Processing 5 schemes (3 concurrent, 2000ms batch delay)…","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:56"}
+{"level":"info","message":"Batch 1/2 — slugs [0…2]","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:56"}
+{"level":"info","message":"  ✓ Synced: kbpyy — \"Krishak Bakri Palan Yojna\"","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:58"}
+{"level":"info","message":"  ✓ Synced: syss — \"Skilled Youth Startup Scheme\"","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:58"}
+{"level":"info","message":"  ✓ Synced: mmkssy-assam — \"Mukhya Mantri Krishi Sa Sajuli Yozana - Assam\"","service":"yojanamitra-sync","timestamp":"2026-02-21 02:01:58"}
+{"level":"info","message":"Batch 2/2 — slugs [3…4]","service":"yojanamitra-sync","timestamp":"2026-02-21 02:02:00"}
+{"level":"info","message":"  ✓ Synced: cctofp — \"Community Canning & Training On Fruit Preservation\"","service":"yojanamitra-sync","timestamp":"2026-02-21 02:02:02"}
+{"level":"info","message":"  ✓ Synced: madilu — \"Madilu Kit\"","service":"yojanamitra-sync","timestamp":"2026-02-21 02:02:02"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 02:02:02"}
+{"level":"info","message":"  Sync Summary","service":"yojanamitra-sync","timestamp":"2026-02-21 02:02:02"}
+{"level":"info","message":"  Status   : SUCCESS","service":"yojanamitra-sync","timestamp":"2026-02-21 02:02:02"}
+{"level":"info","message":"  Total    : 5","service":"yojanamitra-sync","timestamp":"2026-02-21 02:02:02"}
+{"level":"info","message":"  Synced   : 5","service":"yojanamitra-sync","timestamp":"2026-02-21 02:02:02"}
+{"level":"info","message":"  Failed   : 0","service":"yojanamitra-sync","timestamp":"2026-02-21 02:02:02"}
+{"level":"info","message":"  Duration : 6.93s","service":"yojanamitra-sync","timestamp":"2026-02-21 02:02:02"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 02:02:02"}
+{"level":"info","message":"Sync log persisted to `sync_logs` collection","service":"yojanamitra-sync","timestamp":"2026-02-21 02:02:02"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"info","message":"  YojanaMitra — Scheme Sync Started","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"info","message":"  Mode     : TEST (5 schemes)","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"info","message":"  Category : Agriculture,Rural & Environment","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"info","message":"  Dry Run  : NO","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"info","message":"  Started: 2026-02-21T06:32:42.085Z","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"info","message":"MongoDB connected: ac-xpbjpdx-shard-00-00.0z8waq6.mongodb.net / YojnaMitra","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"info","message":"──── Fetching slugs [category=\"Agriculture,Rural & Environment\", limit=5] ────","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"info","message":"  Fetching page: offset=0","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"info","message":"  Total schemes reported by API: 827","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"info","message":"  Limit reached — collected 5 slugs (stopped early)","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"info","message":"──── Slug fetch complete: 5 slugs collected ────","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"info","message":"Processing 5 schemes (3 concurrent, 2000ms batch delay)…","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"info","message":"Batch 1/2 — slugs [0…2]","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"error","message":"API error NETWORK on /schemes/v6/public/schemes: read ECONNRESET","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"warn","message":"Attempt 1/3 failed for fetchScheme:mmkssy-assam: read ECONNRESET. Retrying in 2000ms…","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"error","message":"API error NETWORK on /schemes/v6/public/schemes: read ECONNRESET","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"warn","message":"Attempt 1/3 failed for fetchScheme:kbpyy: read ECONNRESET. Retrying in 2000ms…","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:42"}
+{"level":"info","message":"  ✓ Synced: syss — \"Skilled Youth Startup Scheme\"","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:44"}
+{"level":"error","message":"API error NETWORK on /schemes/v6/public/schemes: read ECONNRESET","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:44"}
+{"level":"warn","message":"Attempt 2/3 failed for fetchScheme:kbpyy: read ECONNRESET. Retrying in 4000ms…","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:44"}
+{"level":"info","message":"  ✓ Synced: mmkssy-assam — \"Mukhya Mantri Krishi Sa Sajuli Yozana - Assam\"","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:46"}
+{"level":"info","message":"  ✓ Synced: kbpyy — \"Krishak Bakri Palan Yojna\"","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:50"}
+{"level":"info","message":"Batch 2/2 — slugs [3…4]","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:52"}
+{"level":"info","message":"  ✓ Synced: cctofp — \"Community Canning & Training On Fruit Preservation\"","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:54"}
+{"level":"info","message":"  ✓ Synced: madilu — \"Madilu Kit\"","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:54"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:54"}
+{"level":"info","message":"  Sync Summary","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:54"}
+{"level":"info","message":"  Status   : SUCCESS","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:54"}
+{"level":"info","message":"  Total    : 5","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:54"}
+{"level":"info","message":"  Synced   : 5","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:54"}
+{"level":"info","message":"  Failed   : 0","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:54"}
+{"level":"info","message":"  Duration : 11.99s","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:54"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:54"}
+{"level":"info","message":"Sync log persisted to `sync_logs` collection","service":"yojanamitra-sync","timestamp":"2026-02-21 12:02:54"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:20"}
+{"level":"info","message":"  YojanaMitra — Scheme Sync Started","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:20"}
+{"level":"info","message":"  Mode     : TEST (5 schemes)","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:20"}
+{"level":"info","message":"  Category : Agriculture,Rural & Environment","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:20"}
+{"level":"info","message":"  Dry Run  : NO","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:20"}
+{"level":"info","message":"  Started: 2026-02-21T08:59:20.464Z","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:20"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:20"}
+{"level":"info","message":"MongoDB connected: ac-xpbjpdx-shard-00-00.0z8waq6.mongodb.net / YojnaMitra","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:22"}
+{"level":"info","message":"──── Fetching slugs [category=\"Agriculture,Rural & Environment\", limit=5] ────","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:22"}
+{"level":"info","message":"  Fetching page: offset=0","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:22"}
+{"level":"info","message":"  Total schemes reported by API: 827","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:23"}
+{"level":"info","message":"  Limit reached — collected 5 slugs (stopped early)","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:23"}
+{"level":"info","message":"──── Slug fetch complete: 5 slugs collected ────","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:23"}
+{"level":"info","message":"Processing 5 schemes (3 concurrent, 2000ms batch delay)…","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:23"}
+{"level":"info","message":"Batch 1/2 — slugs [0…2]","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:23"}
+{"level":"error","message":"API error NETWORK on /schemes/v6/public/schemes: read ECONNRESET","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:23"}
+{"level":"warn","message":"Attempt 1/3 failed for fetchScheme:kbpyy: read ECONNRESET. Retrying in 2000ms…","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:23"}
+{"level":"info","message":"  ✓ Synced: mmkssy-assam — \"Mukhya Mantri Krishi Sa Sajuli Yozana - Assam\"","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:25"}
+{"level":"info","message":"  ✓ Synced: syss — \"Skilled Youth Startup Scheme\"","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:25"}
+{"level":"info","message":"  ✓ Synced: kbpyy — \"Krishak Bakri Palan Yojna\"","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:26"}
+{"level":"info","message":"Batch 2/2 — slugs [3…4]","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:28"}
+{"level":"info","message":"  ✓ Synced: madilu — \"Madilu Kit\"","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:30"}
+{"level":"info","message":"  ✓ Synced: cctofp — \"Community Canning & Training On Fruit Preservation\"","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:30"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:30"}
+{"level":"info","message":"  Sync Summary","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:30"}
+{"level":"info","message":"  Status   : SUCCESS","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:30"}
+{"level":"info","message":"  Total    : 5","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:30"}
+{"level":"info","message":"  Synced   : 5","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:30"}
+{"level":"info","message":"  Failed   : 0","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:30"}
+{"level":"info","message":"  Duration : 10.24s","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:30"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:30"}
+{"level":"info","message":"Sync log persisted to `sync_logs` collection","service":"yojanamitra-sync","timestamp":"2026-02-21 14:29:30"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:52"}
+{"level":"info","message":"  YojanaMitra — Scheme Sync Started","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:52"}
+{"level":"info","message":"  Mode     : TEST (5 schemes)","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:52"}
+{"level":"info","message":"  Category : Agriculture,Rural & Environment","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:52"}
+{"level":"info","message":"  Dry Run  : NO","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:52"}
+{"level":"info","message":"  Started: 2026-02-21T12:00:52.662Z","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:52"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:52"}
+{"level":"info","message":"MongoDB connected: ac-xpbjpdx-shard-00-00.0z8waq6.mongodb.net / YojnaMitra","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:53"}
+{"level":"info","message":"──── Fetching slugs [category=\"Agriculture,Rural & Environment\", limit=5] ────","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:53"}
+{"level":"info","message":"  Fetching page: offset=0","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:53"}
+{"level":"info","message":"  Total schemes reported by API: 827","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:53"}
+{"level":"info","message":"  Limit reached — collected 5 slugs (stopped early)","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:53"}
+{"level":"info","message":"──── Slug fetch complete: 5 slugs collected ────","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:53"}
+{"level":"info","message":"Processing 5 schemes (3 concurrent, 2000ms batch delay)…","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:53"}
+{"level":"info","message":"Batch 1/2 — slugs [0…2]","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:53"}
+{"level":"info","message":"  ✓ Synced: syss — \"Skilled Youth Startup Scheme\"","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:54"}
+{"level":"info","message":"  ✓ Synced: mmkssy-assam — \"Mukhya Mantri Krishi Sa Sajuli Yozana - Assam\"","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:54"}
+{"level":"info","message":"  ✓ Synced: kbpyy — \"Krishak Bakri Palan Yojna\"","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:55"}
+{"level":"info","message":"Batch 2/2 — slugs [3…4]","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:57"}
+{"level":"info","message":"  ✓ Synced: cctofp — \"Community Canning & Training On Fruit Preservation\"","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:59"}
+{"level":"info","message":"  ✓ Synced: madilu — \"Madilu Kit\"","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:59"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:59"}
+{"level":"info","message":"  Sync Summary","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:59"}
+{"level":"info","message":"  Status   : SUCCESS","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:59"}
+{"level":"info","message":"  Total    : 5","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:59"}
+{"level":"info","message":"  Synced   : 5","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:59"}
+{"level":"info","message":"  Failed   : 0","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:59"}
+{"level":"info","message":"  Duration : 6.86s","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:59"}
+{"level":"info","message":"════════════════════════════════════════════════════════════════","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:59"}
+{"level":"info","message":"Sync log persisted to `sync_logs` collection","service":"yojanamitra-sync","timestamp":"2026-02-21 17:30:59"}
