@@ -12,6 +12,7 @@ import authRoutes from './routes/auth.routes';
 import schemeRoutes from './routes/scheme.routes';
 import applicationRoutes from './routes/application.routes';
 import documentRoutes from './routes/document.routes';
+import whatsappRoutes from './routes/whatsapp.routes';
 
 // Load environment variables
 dotenv.config();
@@ -76,6 +77,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/schemes', schemeRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/documents', documentRoutes);
+app.use('/api/whatsapp', whatsappRoutes);
 
 // Root endpoint
 app.get('/', (_req: Request, res: Response) => {

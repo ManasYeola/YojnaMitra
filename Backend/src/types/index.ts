@@ -29,6 +29,13 @@ export interface IScheme extends Document {
   benefits: string[];
   eligibility: {
     states?: string[];
+    occupationType?: string[];
+    landOwnership?: string[];
+    ageRange?: string[];
+    casteCategory?: string[];
+    incomeRange?: string[];
+    bplCard?: string;
+    specialCategories?: string[];
     crops?: string[];
     farmerCategory?: string[];
     maxLandSize?: number;

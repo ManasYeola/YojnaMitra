@@ -36,6 +36,41 @@ const schemeSchema = new Schema<IScheme>(
         type: [String],
         default: ['All States'],
       },
+      occupationType: {
+        type: [String],
+        enum: ['crop_farmer', 'dairy_farmer', 'fisherman', 'agri_labourer', 'agri_entrepreneur', 'other', 'all'],
+        default: ['all'],
+      },
+      landOwnership: {
+        type: [String],
+        enum: ['owned', 'landless', 'leased', 'all'],
+        default: ['all'],
+      },
+      ageRange: {
+        type: [String],
+        enum: ['below_18', '18_40', '41_60', 'above_60', 'all'],
+        default: ['all'],
+      },
+      casteCategory: {
+        type: [String],
+        enum: ['general', 'sc', 'st', 'obc', 'not_specified', 'all'],
+        default: ['all'],
+      },
+      incomeRange: {
+        type: [String],
+        enum: ['below_1l', '1l_3l', '3l_8l', 'above_8l', 'all'],
+        default: ['all'],
+      },
+      bplCard: {
+        type: String,
+        enum: ['required', 'not_required', 'preferred'],
+        default: 'not_required',
+      },
+      specialCategories: {
+        type: [String],
+        enum: ['pwd', 'woman', 'youth', 'none', 'all'],
+        default: ['all'],
+      },
       crops: {
         type: [String],
         default: [],
