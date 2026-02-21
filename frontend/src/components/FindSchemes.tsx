@@ -51,7 +51,7 @@ export default function FindSchemes({ onBack }: FindSchemesProps) {
       {/* Header */}
       <header className="find-schemes-header">
         <button onClick={onBack} className="back-button">
-          ← Back
+          ← 
         </button>
         <div className="header-content">
           <h1>Government Schemes</h1>
