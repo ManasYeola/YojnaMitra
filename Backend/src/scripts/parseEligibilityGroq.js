@@ -18,7 +18,7 @@
  */
 
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../.env') });
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const mongoose = require('mongoose');
 const axios    = require('axios');
 
@@ -206,9 +206,9 @@ async function main() {
     process.exit(1);
   }
 
-  const uri = process.env.SCHEMES_MONGO_URI || process.env.MONGO_URI;
+  const uri = process.env.SCHEMES_MONGO_URI || process.env.MONGO_URI || process.env.MONGODB_URI;
   if (!uri) {
-    console.error('❌ SCHEMES_MONGO_URI is not set in Backend/src/.env');
+    console.error('❌ MONGODB_URI is not set in Backend/.env');
     process.exit(1);
   }
 
