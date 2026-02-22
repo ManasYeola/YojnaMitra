@@ -171,7 +171,13 @@ export async function matchSchemes(
   limit = 200,
   nearMissMax = 30,
 ): Promise<MatchResult> {
-  const col = schemesDb.db!.collection<SyncedScheme>('schemes');
+  // Guard: if schemes DB is not connected, return empty gracefully
+  if (!schemesDb.db) {
+    console.warn('⚠  matchSchemes called but schemesDb is not connected (SCHEMES_MONGO_URI not set?)');
+    return { eligible: [], nearMiss: [] };
+  }
+
+  const col = schemesDb.db.collection<SyncedScheme>('schemes');
 
   // Pass 1 — MongoDB pre-filter: active + (Central-level OR matches user's state)
   const statePattern = new RegExp(
