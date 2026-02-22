@@ -142,7 +142,7 @@ async function createSessionLink(
     specialCategory: user.specialCategory,
   };
 
-  const eligibleSchemeIds = await matchSchemes(profile);
+  const { eligible: eligibleSchemeIds, nearMiss: nearMissData } = await matchSchemes(profile);
 
   const token     = crypto.randomBytes(32).toString('hex');
   const expiresAt = new Date(Date.now() + SESSION_TTL_HOURS * 60 * 60 * 1000);
@@ -152,6 +152,7 @@ async function createSessionLink(
     phone:  user.phone,
     userId: user._id.toString(),
     eligibleSchemeIds,
+    nearMissData,
     view,
     expiresAt,
   });

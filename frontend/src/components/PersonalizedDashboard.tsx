@@ -19,6 +19,18 @@ interface Scheme {
   basicDetails?: any;
 }
 
+interface FailedReason {
+  field:  string;
+  reason: string;
+  action: string | null;
+}
+
+interface NearMissScheme extends Scheme {
+  failedFields: string[];
+  failedCount:  number;
+  reasons:      FailedReason[];
+}
+
 const AGRICULTURE_CAT = 'Agriculture,Rural & Environment';
 
 /** Decode HTML entities like &amp; &quot; &#x27; etc. from raw DB text.
@@ -127,12 +139,62 @@ function SchemeCard({ scheme }: { scheme: Scheme }) {
   );
 }
 
+/** Near-miss card — shows why the farmer just missed eligibility */
+function NearMissCard({ scheme }: { scheme: NearMissScheme }) {
+  const rawDesc = scheme.description_md || scheme.description || 'Government welfare scheme';
+  const cleanDesc = decodeHtml(rawDesc);
+
+  return (
+    <div className="scheme-card near-miss-card">
+      <div className="card-body">
+        <div className="scheme-header">
+          <h3 className="scheme-name">{decodeHtml(scheme.name)}</h3>
+          {scheme.level && <span className="scheme-level">{scheme.level}</span>}
+        </div>
+
+        {scheme.category && Array.isArray(scheme.category) && scheme.category.length > 0 && (
+          <div className="scheme-tags">
+            {scheme.category.slice(0, 3).map((cat: any, idx: number) => (
+              <span key={idx} className="tag">{getCatName(cat)}</span>
+            ))}
+          </div>
+        )}
+
+        <p className="scheme-desc">
+          {cleanDesc.substring(0, 120)}{cleanDesc.length > 120 && '...'}
+        </p>
+
+        {/* Why you missed */}
+        <div className="near-miss-reasons">
+          {scheme.reasons.map((r, i) => (
+            <div key={i} className="near-miss-reason">
+              <span className="near-miss-icon">⚠️</span>
+              <div>
+                <span className="near-miss-text">{r.reason}</span>
+                {r.action && <p className="near-miss-action">{r.action}</p>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <button
+        className="btn-apply btn-apply-nearMiss"
+        onClick={() => window.open(getApplyUrl(scheme), '_blank', 'noopener,noreferrer')}
+      >
+        View Scheme →
+      </button>
+    </div>
+  );
+}
+
 export default function PersonalizedDashboard() {
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get('token');
   
   const [loading, setLoading] = useState(true);
   const [schemes, setSchemes] = useState<Scheme[]>([]);
+  const [nearMissSchemes, setNearMissSchemes] = useState<NearMissScheme[]>([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -152,7 +214,9 @@ export default function PersonalizedDashboard() {
       const cacheKey = `session_${token}`;
       const cached = sessionStorage.getItem(cacheKey);
       if (cached) {
-        setSchemes(JSON.parse(cached));
+        const { schemes, nearMiss } = JSON.parse(cached);
+        setSchemes(schemes || []);
+        setNearMissSchemes(nearMiss || []);
         setLoading(false);
         return;
       }
@@ -162,8 +226,10 @@ export default function PersonalizedDashboard() {
 
       if (data.success) {
         const schemes = data.schemes || [];
+        const nearMiss = data.nearMissSchemes || [];
         setSchemes(schemes);
-        sessionStorage.setItem(cacheKey, JSON.stringify(schemes));
+        setNearMissSchemes(nearMiss);
+        sessionStorage.setItem(cacheKey, JSON.stringify({ schemes, nearMiss }));
       } else {
         setError(data.message || 'Failed to load schemes');
       }
@@ -231,6 +297,24 @@ export default function PersonalizedDashboard() {
                 </div>
               </section>
             ))}
+
+            {/* Near-miss section */}
+            {nearMissSchemes.length > 0 && (
+              <section className="scheme-group near-miss-section">
+                <div className="scheme-group-heading near-miss-heading">
+                  <h3 className="scheme-group-title">⚡ You&apos;re Close to Qualifying</h3>
+                  <span className="scheme-group-count near-miss-badge">{nearMissSchemes.length} scheme{nearMissSchemes.length !== 1 ? 's' : ''}</span>
+                </div>
+                <p className="near-miss-subtitle">
+                  These schemes have 1–2 requirements you currently don&apos;t meet. See what&apos;s blocking you.
+                </p>
+                <div className="schemes-grid">
+                  {nearMissSchemes.map((scheme) => (
+                    <NearMissCard key={scheme._id} scheme={scheme} />
+                  ))}
+                </div>
+              </section>
+            )}
           </>
         ) : (
           <div className="empty-state">
