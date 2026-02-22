@@ -1,63 +1,69 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export type SessionState =
-  | 'new'
-  | 'ask_name'
-  | 'q1_state'
-  | 'q2_farmer_type'
-  | 'q3_land'
-  | 'q4_age'
-  | 'q5_caste'
-  | 'q6_income'
-  | 'q7_bpl'
-  | 'q8_special'
-  | 'complete'
-  | 'menu';
-
-export interface ISessionAnswers {
-  name?:          string;
-  state?:         string;
-  farmerType?:    string;
-  landOwnership?: string;
-  ageRange?:      string;
-  caste?:         string;
-  incomeRange?:   string;
-  isBPL?:         boolean;
-}
-
 export interface IWhatsAppSession extends Document {
-  phone:          string;
-  state:          SessionState;
-  answers:        ISessionAnswers;
-  lastActivityAt: Date;
-  userId?:        string;
-  createdAt:      Date;
-  updatedAt:      Date;
+  phoneNumber: string;
+  stage: 'greeting' | 'state' | 'occupation' | 'landOwnership' | 'age' | 'caste' | 'income' | 'bpl' | 'specialCategory' | 'done';
+  state: string;
+  occupationType: string;
+  landOwnership: string;
+  age: string;
+  casteCategory: string;
+  income: string;
+  bplCard: string;
+  specialCategories: string[];
+  lastActivity: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const whatsAppSessionSchema = new Schema<IWhatsAppSession>(
   {
-    phone: {
+    phoneNumber: {
       type: String,
       required: true,
       unique: true,
       index: true,
     },
+    stage: {
+      type: String,
+      enum: ['greeting', 'state', 'occupation', 'landOwnership', 'age', 'caste', 'income', 'bpl', 'specialCategory', 'done'],
+      default: 'greeting',
+    },
     state: {
       type: String,
-      enum: ['new','ask_name','q1_state','q2_farmer_type','q3_land','q4_age','q5_caste','q6_income','q7_bpl','q8_special','complete','menu'],
-      default: 'new',
+      default: '',
     },
-    answers: {
-      type: Schema.Types.Mixed,
-      default: {},
+    occupationType: {
+      type: String,
+      default: '',
     },
-    lastActivityAt: {
+    landOwnership: {
+      type: String,
+      default: '',
+    },
+    age: {
+      type: String,
+      default: '',
+    },
+    casteCategory: {
+      type: String,
+      default: '',
+    },
+    income: {
+      type: String,
+      default: '',
+    },
+    bplCard: {
+      type: String,
+      default: '',
+    },
+    specialCategories: {
+      type: [String],
+      default: [],
+    },
+    lastActivity: {
       type: Date,
       default: Date.now,
-    },
-    userId: {
-      type: String,
     },
   },
   {
@@ -65,9 +71,9 @@ const whatsAppSessionSchema = new Schema<IWhatsAppSession>(
   }
 );
 
-// Auto-delete sessions after 24 hours of inactivity
-whatsAppSessionSchema.index({ lastActivityAt: 1 }, { expireAfterSeconds: 86400 });
+// Auto-delete sessions older than 24 hours
+whatsAppSessionSchema.index({ lastActivity: 1 }, { expireAfterSeconds: 86400 });
 
-const WhatsappSession = mongoose.model<IWhatsAppSession>('WhatsappSession', whatsAppSessionSchema);
+const WhatsAppSession = mongoose.model<IWhatsAppSession>('WhatsAppSession', whatsAppSessionSchema);
 
-export default WhatsappSession;
+export default WhatsAppSession;
