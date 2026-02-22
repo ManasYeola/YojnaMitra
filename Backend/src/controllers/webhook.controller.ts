@@ -178,9 +178,9 @@ export const handleWhatsappWebhook = async (req: Request, res: Response): Promis
     const text  = body.toLowerCase();
 
     // Load or create session
-    let session = await WhatsappSession.findOne({ phone });
+    let session = await WhatsappSession.findOne({ phoneNumber: phone });
     if (!session) {
-      session = await WhatsappSession.create({ phone, state: 'new', answers: {} });
+      session = await WhatsappSession.create({ phoneNumber: phone, state: 'new', answers: {} });
     }
 
     // Update activity timestamp
