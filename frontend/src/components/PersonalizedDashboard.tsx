@@ -3,6 +3,7 @@ import '../styles/PersonalizedDashboard.css';
 
 interface Scheme {
   _id: string;
+  slug?: string;
   name: string;
   category?: any[];
   level?: string;
@@ -18,43 +19,217 @@ interface Scheme {
   basicDetails?: any;
 }
 
-const MOCK_SCHEMES: Scheme[] = [
-  { _id: '1', name: 'PM-KISAN', level: 'Central', state: null, category: ['Income Support'], amount: '₹6,000/year', description: 'Direct income support of ₹6000 per year to all landholding farmer families in three equal instalments of ₹2000 each.', applyUrl: 'https://pmkisan.gov.in' },
-  { _id: '2', name: 'PMFBY – Pradhan Mantri Fasal Bima Yojana', level: 'Central', state: null, category: ['Crop Insurance'], amount: 'Upto full sum insured', description: 'Provides financial support to farmers suffering crop loss/damage due to unforeseen events like natural calamities, pests & diseases.', applyUrl: 'https://pmfby.gov.in' },
-  { _id: '3', name: 'Kisan Credit Card (KCC)', level: 'Central', state: null, category: ['Credit & Loans'], amount: 'Upto ₹3 Lakh @ 4% p.a.', description: 'Provides farmers with timely and adequate credit for their agricultural operations at subsidised interest rates.', applyUrl: 'https://www.rbi.org.in' },
-  { _id: '4', name: 'Soil Health Card Scheme', level: 'Central', state: null, category: ['Soil & Fertiliser'], amount: 'Free soil testing', description: 'Issues soil health cards to farmers with crop-wise recommendations of nutrients and fertilisers required for individual farms.', applyUrl: 'https://soilhealth.dac.gov.in' },
-  { _id: '5', name: 'PM Kisan Maan Dhan Yojana', level: 'Central', state: null, category: ['Pension'], amount: '₹3,000/month pension', description: 'Voluntary and contributory pension scheme for small and marginal farmers to ensure social security after the age of 60.', applyUrl: 'https://pmkmy.gov.in' },
-];
+interface FailedReason {
+  field:  string;
+  reason: string;
+  action: string | null;
+}
+
+interface NearMissScheme extends Scheme {
+  failedFields: string[];
+  failedCount:  number;
+  reasons:      FailedReason[];
+}
+
+const AGRICULTURE_CAT = 'Agriculture,Rural & Environment';
+
+/** Decode HTML entities like &amp; &quot; &#x27; etc. from raw DB text.
+ *  Loops until stable to handle double-encoded strings (e.g. &amp;quot; → &quot; → "). */
+function decodeHtml(text: string): string {
+  if (!text) return '';
+  const txt = document.createElement('textarea');
+  let decoded = text;
+  for (let i = 0; i < 3; i++) {
+    txt.innerHTML = decoded;
+    const next = txt.value;
+    if (next === decoded) break; // stable — no more entities
+    decoded = next;
+  }
+  return decoded;
+}
+
+/** Extract the display name from a category entry (string or object) */
+function getCatName(cat: any): string {
+  return typeof cat === 'string' ? cat : cat?.schemeCategoryName || 'General';
+}
+
+/**
+ * Returns the "primary grouping category" for a scheme:
+ * — the first non-Agriculture category, or AGRICULTURE_CAT if all are Agriculture.
+ */
+function getPrimaryCategory(scheme: Scheme): string {
+  if (!scheme.category || scheme.category.length === 0) return 'Other';
+  const nonAgri = scheme.category
+    .map(getCatName)
+    .find((c) => c !== AGRICULTURE_CAT);
+  return nonAgri ?? AGRICULTURE_CAT;
+}
+
+/**
+ * Groups schemes by primary category.
+ * Agriculture always appears last (it's the catch-all fallback).
+ */
+function groupSchemes(schemes: Scheme[]): { category: string; schemes: Scheme[] }[] {
+  const map = new Map<string, Scheme[]>();
+
+  for (const scheme of schemes) {
+    const cat = getPrimaryCategory(scheme);
+    if (!map.has(cat)) map.set(cat, []);
+    map.get(cat)!.push(scheme);
+  }
+
+  // Sort: Agriculture last, rest alphabetically
+  return Array.from(map.entries())
+    .sort(([a], [b]) => {
+      if (a === AGRICULTURE_CAT) return 1;
+      if (b === AGRICULTURE_CAT) return -1;
+      return a.localeCompare(b);
+    })
+    .map(([category, schemes]) => ({ category, schemes }));
+}
+
+/** Build the MyScheme apply URL from slug. Falls back to _id (which is also the slug). */
+function getApplyUrl(scheme: Scheme): string {
+  const slug = scheme.slug || scheme._id;
+  return `https://www.myscheme.gov.in/schemes/${slug}`;
+}
+
+/** Small card component — keeps category chips intact */
+function SchemeCard({ scheme }: { scheme: Scheme }) {
+  const rawDesc = scheme.description_md || scheme.description || 'Government welfare scheme';
+  const cleanDesc = decodeHtml(rawDesc);
+  const descText = cleanDesc.substring(0, 150);
+  const isTruncated = cleanDesc.length > 150;
+
+  return (
+    <div className="scheme-card">
+      <div className="card-body">
+        <div className="scheme-header">
+          <h3 className="scheme-name">{decodeHtml(scheme.name)}</h3>
+          {scheme.level && <span className="scheme-level">{scheme.level}</span>}
+        </div>
+
+        {scheme.category && Array.isArray(scheme.category) && scheme.category.length > 0 && (
+          <div className="scheme-tags">
+            {scheme.category.slice(0, 3).map((cat: any, idx: number) => (
+              <span key={idx} className="tag">{getCatName(cat)}</span>
+            ))}
+          </div>
+        )}
+
+        <p className="scheme-desc">
+          {descText}{isTruncated && '...'}
+        </p>
+
+        {scheme.amount && (
+          <div className="scheme-benefit">
+            <span className="benefit-label">Benefit:</span>
+            <span className="benefit-value">{decodeHtml(scheme.amount)}</span>
+          </div>
+        )}
+      </div>
+
+      <button
+        className="btn-apply"
+        onClick={() => window.open(getApplyUrl(scheme), '_blank', 'noopener,noreferrer')}
+      >
+        Apply Now →
+      </button>
+    </div>
+  );
+}
+
+/** Near-miss card — shows why the farmer just missed eligibility */
+function NearMissCard({ scheme }: { scheme: NearMissScheme }) {
+  const rawDesc = scheme.description_md || scheme.description || 'Government welfare scheme';
+  const cleanDesc = decodeHtml(rawDesc);
+
+  return (
+    <div className="scheme-card near-miss-card">
+      <div className="card-body">
+        <div className="scheme-header">
+          <h3 className="scheme-name">{decodeHtml(scheme.name)}</h3>
+          {scheme.level && <span className="scheme-level">{scheme.level}</span>}
+        </div>
+
+        {scheme.category && Array.isArray(scheme.category) && scheme.category.length > 0 && (
+          <div className="scheme-tags">
+            {scheme.category.slice(0, 3).map((cat: any, idx: number) => (
+              <span key={idx} className="tag">{getCatName(cat)}</span>
+            ))}
+          </div>
+        )}
+
+        <p className="scheme-desc">
+          {cleanDesc.substring(0, 120)}{cleanDesc.length > 120 && '...'}
+        </p>
+
+        {/* Why you missed */}
+        <div className="near-miss-reasons">
+          {scheme.reasons.map((r, i) => (
+            <div key={i} className="near-miss-reason">
+              <span className="near-miss-icon">⚠️</span>
+              <div>
+                <span className="near-miss-text">{r.reason}</span>
+                {r.action && <p className="near-miss-action">{r.action}</p>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <button
+        className="btn-apply btn-apply-nearMiss"
+        onClick={() => window.open(getApplyUrl(scheme), '_blank', 'noopener,noreferrer')}
+      >
+        View Scheme →
+      </button>
+    </div>
+  );
+}
 
 export default function PersonalizedDashboard() {
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get('token');
-  const preview = urlParams.get('preview') === '1';
   
-  const [loading, setLoading] = useState(!preview);
-  const [schemes, setSchemes] = useState<Scheme[]>(preview ? MOCK_SCHEMES : []);
+  const [loading, setLoading] = useState(true);
+  const [schemes, setSchemes] = useState<Scheme[]>([]);
+  const [nearMissSchemes, setNearMissSchemes] = useState<NearMissScheme[]>([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (preview) return; // mock data already set
     if (token) {
       fetchEligibleSchemes(token);
     } else {
       setError('Invalid access. Please use the link sent to your WhatsApp.');
       setLoading(false);
     }
-  }, [token, preview]);
+  }, [token]);
 
   const fetchEligibleSchemes = async (token: string) => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `http://localhost:5000/api/session/${token}`
-      );
 
+      // Check sessionStorage cache first (clears when tab closes)
+      const cacheKey = `session_${token}`;
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) {
+        const { schemes, nearMiss } = JSON.parse(cached);
+        setSchemes(schemes || []);
+        setNearMissSchemes(nearMiss || []);
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch(`/api/session/${token}`);
       const data = await response.json();
+
       if (data.success) {
-        setSchemes(data.schemes || []);
+        const schemes = data.schemes || [];
+        const nearMiss = data.nearMissSchemes || [];
+        setSchemes(schemes);
+        setNearMissSchemes(nearMiss);
+        sessionStorage.setItem(cacheKey, JSON.stringify({ schemes, nearMiss }));
       } else {
         setError(data.message || 'Failed to load schemes');
       }
@@ -70,13 +245,15 @@ export default function PersonalizedDashboard() {
     return (
       <div className="personalized-dashboard">
         <div className="error-container">
-          <div className="error-icon"></div>
+          <div className="error-icon">⚠️</div>
           <h2>Access Error</h2>
           <p>{error}</p>
         </div>
       </div>
     );
   }
+
+  const groups = groupSchemes(schemes);
 
   return (
     <div className="personalized-dashboard">
@@ -101,58 +278,47 @@ export default function PersonalizedDashboard() {
         ) : schemes.length > 0 ? (
           <>
             <div className="schemes-header">
-              <h2>Your Personalized Schemes</h2>
+              <h2>🎯 Your Personalized Schemes</h2>
               <p className="schemes-count">
                 We found <strong>{schemes.length}</strong> schemes matching your profile
               </p>
             </div>
 
-            <div className="schemes-grid">
-              {schemes.map((scheme) => (
-                <div key={scheme._id} className="scheme-card">
-                  <div className="scheme-header">
-                    <h3 className="scheme-name">{scheme.name}</h3>
-                    {scheme.level && (
-                      <span className="scheme-level">{scheme.level}</span>
-                    )}
-                  </div>
-
-                  {scheme.category && Array.isArray(scheme.category) && scheme.category.length > 0 && (
-                    <div className="scheme-tags">
-                      {scheme.category.slice(0, 3).map((cat: any, idx: number) => (
-                        <span key={idx} className="tag">
-                          {typeof cat === 'string' ? cat : cat.schemeCategoryName || 'General'}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  <p className="scheme-desc">
-                    {(scheme.description_md || scheme.description || 'Government welfare scheme').substring(0, 150)}
-                    {((scheme.description_md?.length ?? 0) > 150 || (scheme.description?.length ?? 0) > 150) && '...'}
-                  </p>
-
-                  {scheme.amount && (
-                    <div className="scheme-benefit">
-                      <span className="benefit-label">Benefit:</span>
-                      <span className="benefit-value">{scheme.amount}</span>
-                    </div>
-                  )}
-
-                  <button
-                    className="btn-apply"
-                    onClick={() => scheme.applyUrl && window.open(scheme.applyUrl, '_blank', 'noopener,noreferrer')}
-                    disabled={!scheme.applyUrl}
-                  >
-                    Apply Now →
-                  </button>
+            {groups.map(({ category, schemes: groupSchemes }) => (
+              <section key={category} className="scheme-group">
+                <div className="scheme-group-heading">
+                  <h3 className="scheme-group-title">{category}</h3>
+                  <span className="scheme-group-count">{groupSchemes.length} scheme{groupSchemes.length !== 1 ? 's' : ''}</span>
                 </div>
-              ))}
-            </div>
+                <div className="schemes-grid">
+                  {groupSchemes.map((scheme) => (
+                    <SchemeCard key={scheme._id} scheme={scheme} />
+                  ))}
+                </div>
+              </section>
+            ))}
+
+            {/* Near-miss section */}
+            {nearMissSchemes.length > 0 && (
+              <section className="scheme-group near-miss-section">
+                <div className="scheme-group-heading near-miss-heading">
+                  <h3 className="scheme-group-title">⚡ You&apos;re Close to Qualifying</h3>
+                  <span className="scheme-group-count near-miss-badge">{nearMissSchemes.length} scheme{nearMissSchemes.length !== 1 ? 's' : ''}</span>
+                </div>
+                <p className="near-miss-subtitle">
+                  These schemes have 1–2 requirements you currently don&apos;t meet. See what&apos;s blocking you.
+                </p>
+                <div className="schemes-grid">
+                  {nearMissSchemes.map((scheme) => (
+                    <NearMissCard key={scheme._id} scheme={scheme} />
+                  ))}
+                </div>
+              </section>
+            )}
           </>
         ) : (
           <div className="empty-state">
-            <div className="empty-icon"></div>
+            <div className="empty-icon">📋</div>
             <h3>No Matching Schemes Found</h3>
             <p>We couldn't find any schemes matching your current profile.</p>
             <p className="help-text">
@@ -164,16 +330,10 @@ export default function PersonalizedDashboard() {
 
       {/* Footer */}
       <footer className="dashboard-footer">
-        <div className="footer-inner">
-          <div className="footer-brand">
-            <img src="/logo.png" alt="Yojna Mitra" className="footer-logo" />
-            <span className="footer-brand-name">Yojna Mitra</span>
-          </div>
-          <p className="footer-note">
-            Schemes are curated based on your profile. Always verify eligibility on the official scheme website before applying.
-          </p>
-          <p className="footer-copy">&copy; 2026 Yojna Mitra. All rights reserved.</p>
-        </div>
+        <p>Powered by Yojna Mitra</p>
+        <p className="footer-note">
+          These schemes are curated based on your profile. For official information, visit the respective scheme websites.
+        </p>
       </footer>
     </div>
   );

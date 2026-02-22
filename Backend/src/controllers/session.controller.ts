@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import crypto from 'crypto';
 import UserSession from '../models/UserSession';
 import schemesDb from '../config/schemesDb';
-import { matchSchemes, UserProfile } from '../services/matchingEngine';
+import { matchSchemes, UserProfile, FIELD_REASON, FIELD_ACTION } from '../services/matchingEngine';
 
 /**
  * GET /api/session/:token
@@ -63,6 +63,7 @@ export const getSession = async (req: Request, res: Response): Promise<void> => 
         {
           projection: {
             _id: 1,
+            slug: 1,
             name: 1,
             level: 1,
             state: 1,
@@ -82,11 +83,37 @@ export const getSession = async (req: Request, res: Response): Promise<void> => 
       )
       .toArray();
 
+    // ── Fetch near-miss scheme documents ───────────────────────────────────
+    const nearMissIds = (session.nearMissData || []).map((n: any) => n.schemeId);
+    const nearMissDocsRaw = nearMissIds.length > 0
+      ? await col
+          .find(
+            { _id: { $in: nearMissIds } } as any,
+            { projection: { _id: 1, slug: 1, name: 1, level: 1, state: 1,
+                            category: 1, description_md: 1, amount: 1, applyUrl: 1 } },
+          )
+          .toArray()
+      : [];
+
+    // Attach failedFields + human-readable reasons to each near-miss doc
+    const nearMissMap = new Map((session.nearMissData || []).map((n: any) => [n.schemeId, n]));
+    const nearMissSchemes = nearMissDocsRaw.map((doc: any) => {
+      const meta = nearMissMap.get(String(doc._id)) as any;
+      const reasons = (meta?.failedFields || []).map((f: string) => ({
+        field:  f,
+        reason: FIELD_REASON[f] || f,
+        action: FIELD_ACTION[f] || null,
+      }));
+      return { ...doc, failedFields: meta?.failedFields || [], failedCount: meta?.failedCount || 0, reasons };
+    });
+
     res.status(200).json({
       success: true,
       view:    session.view,
       count:   schemes.length,
       schemes,
+      nearMissSchemes,
+      nearMissCount: nearMissSchemes.length,
     });
   } catch (error) {
     console.error('Session controller error:', error);
@@ -154,23 +181,24 @@ export const createSession = async (req: Request, res: Response): Promise<void> 
       specialCategory,
     };
 
-    const eligibleSchemeIds = await matchSchemes(profile);
+    const { eligible: eligibleSchemeIds, nearMiss: nearMissData } = await matchSchemes(profile);
 
     const token     = crypto.randomBytes(32).toString('hex');
     const ttlHours  = parseInt(process.env.SESSION_TTL_HOURS || '24');
     const expiresAt = new Date(Date.now() + ttlHours * 60 * 60 * 1000);
 
-    await UserSession.create({ token, phone, eligibleSchemeIds, view, expiresAt });
+    await UserSession.create({ token, phone, eligibleSchemeIds, nearMissData, view, expiresAt });
 
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
     res.status(201).json({
-      success:      true,
+      success:        true,
       token,
-      sessionUrl:   `${frontendUrl}?token=${token}`,
-      fetchUrl:     `/api/session/${token}`,
-      matchedCount: eligibleSchemeIds.length,
-      expiresAt:    expiresAt.toISOString(),
+      sessionUrl:     `${frontendUrl}?token=${token}`,
+      fetchUrl:       `/api/session/${token}`,
+      matchedCount:   eligibleSchemeIds.length,
+      nearMissCount:  nearMissData.length,
+      expiresAt:      expiresAt.toISOString(),
     });
   } catch (error) {
     console.error('createSession error:', error);

@@ -39,9 +39,18 @@ app.set('trust proxy', 1);
 // Security middleware
 app.use(helmet());
 
-// CORS configuration
+// CORS configuration — accepts comma-separated origins from CORS_ORIGIN env var
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
+  .split(',')
+  .map((o) => o.trim());
+allowedOrigins.push('http://localhost:5173'); // always allow local dev
+
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin: (origin: string | undefined, cb: (e: Error | null, allow?: boolean) => void) => {
+    // Allow server-to-server (Vite proxy / curl) where Origin header is absent
+    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    cb(new Error(`CORS blocked: ${origin}`));
+  },
   credentials: true,
   optionsSuccessStatus: 200,
 };
