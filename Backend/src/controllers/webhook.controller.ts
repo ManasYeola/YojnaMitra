@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import crypto from 'crypto';
 import User from '../models/User';
 import UserSession from '../models/UserSession';
-import WhatsappSession, { SessionState } from '../models/WhatsAppSession';
+import WhatsappSession, { SessionState, IWhatsAppSession } from '../models/WhatsappSession';
 import { sendWhatsAppMessage } from '../services/whatsapp.service';
 import { matchSchemes, UserProfile } from '../services/matchingEngine';
 
@@ -226,7 +226,7 @@ async function handleState(
   phone: string,
   text: string,
   originalBody: string,
-  session: InstanceType<typeof WhatsappSession>
+  session: IWhatsAppSession
 ): Promise<void> {
 
   const state = session.state as SessionState;
