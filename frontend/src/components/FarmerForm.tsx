@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Farmer } from '../types';
 import { states } from '../data/schemesData';
+import '../styles/FarmerForm.css';
 
 interface FarmerFormProps {
   onSubmit: (farmer: Farmer) => void;

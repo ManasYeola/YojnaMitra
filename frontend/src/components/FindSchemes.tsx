@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import '../styles/FindSchemes.css';
+import authService from '../services/auth.service';
 
 interface FindSchemesProps {
   onBack: () => void;
+  farmer?: { name?: string; state?: string; farmerType?: string } | null;
 }
 
 interface Scheme {
@@ -17,21 +19,39 @@ interface Scheme {
   applyUrl: string;
 }
 
-export default function FindSchemes({ onBack }: FindSchemesProps) {
+export default function FindSchemes({ onBack, farmer }: FindSchemesProps) {
   const [loading, setLoading] = useState(true);
   const [schemes, setSchemes] = useState<Scheme[]>([]);
+  const [isPersonalized, setIsPersonalized] = useState(false);
 
   useEffect(() => {
-    fetchAllSchemes();
+    fetchSchemes();
   }, []);
 
-  const fetchAllSchemes = async () => {
+  const fetchSchemes = async () => {
     try {
       setLoading(true);
+      const token = authService.getToken();
+
+      if (token) {
+        // Try personalized eligible schemes first
+        const res = await fetch('http://localhost:5000/api/schemes/eligible', {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (data.success && (data.data?.schemes || data.data?.eligibleSchemes)) {
+          setSchemes(data.data?.schemes || data.data?.eligibleSchemes || []);
+          setIsPersonalized(true);
+          return;
+        }
+      }
+
+      // Fallback to all schemes
       const response = await fetch('http://localhost:5000/api/schemes');
       const data = await response.json();
       if (data.success) {
         setSchemes(data.data?.schemes || []);
+        setIsPersonalized(false);
       }
     } catch (error) {
       console.error('Error fetching schemes:', error);
@@ -55,6 +75,13 @@ export default function FindSchemes({ onBack }: FindSchemesProps) {
         </button>
         <div className="header-content">
           <h1>Government Schemes</h1>
+          {isPersonalized && (
+            <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#a7f3d0' }}>
+              Showing schemes eligible for{farmer?.name ? ` ${farmer.name}` : ' you'}
+              {farmer?.state ? ` · ${farmer.state}` : ''}
+              {farmer?.farmerType ? ` · ${farmer.farmerType.replace(/_/g, ' ')}` : ''}
+            </p>
+          )}
         </div>
       </header>
 

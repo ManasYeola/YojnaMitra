@@ -1,5 +1,6 @@
 import { apiService } from './api.service';
 import API_CONFIG from '../config/api.config';
+import type { FarmerType, LandOwnership, AgeRange, CasteCategory, IncomeRange } from '../types';
 
 // Types
 export interface SendOTPRequest {
@@ -32,7 +33,13 @@ export interface UserProfile {
   cropType?: string;
   farmerCategory?: 'small' | 'marginal' | 'large';
   age?: number;
-  incomeRange?: string;
+  incomeRange?: IncomeRange;
+  farmerType?: FarmerType;
+  landOwnership?: LandOwnership;
+  ageRange?: AgeRange;
+  caste?: CasteCategory;
+  isBPL?: boolean;
+  specialCategory?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -45,7 +52,13 @@ export interface UpdateProfileRequest {
   cropType?: string;
   farmerCategory?: 'small' | 'marginal' | 'large';
   age?: number;
-  incomeRange?: string;
+  incomeRange?: IncomeRange;
+  farmerType?: FarmerType;
+  landOwnership?: LandOwnership;
+  ageRange?: AgeRange;
+  caste?: CasteCategory;
+  isBPL?: boolean;
+  specialCategory?: string[];
 }
 
 export interface AuthResponse {

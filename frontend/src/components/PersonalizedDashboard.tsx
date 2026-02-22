@@ -18,22 +18,32 @@ interface Scheme {
   basicDetails?: any;
 }
 
+const MOCK_SCHEMES: Scheme[] = [
+  { _id: '1', name: 'PM-KISAN', level: 'Central', state: null, category: ['Income Support'], amount: '₹6,000/year', description: 'Direct income support of ₹6000 per year to all landholding farmer families in three equal instalments of ₹2000 each.', applyUrl: 'https://pmkisan.gov.in' },
+  { _id: '2', name: 'PMFBY – Pradhan Mantri Fasal Bima Yojana', level: 'Central', state: null, category: ['Crop Insurance'], amount: 'Upto full sum insured', description: 'Provides financial support to farmers suffering crop loss/damage due to unforeseen events like natural calamities, pests & diseases.', applyUrl: 'https://pmfby.gov.in' },
+  { _id: '3', name: 'Kisan Credit Card (KCC)', level: 'Central', state: null, category: ['Credit & Loans'], amount: 'Upto ₹3 Lakh @ 4% p.a.', description: 'Provides farmers with timely and adequate credit for their agricultural operations at subsidised interest rates.', applyUrl: 'https://www.rbi.org.in' },
+  { _id: '4', name: 'Soil Health Card Scheme', level: 'Central', state: null, category: ['Soil & Fertiliser'], amount: 'Free soil testing', description: 'Issues soil health cards to farmers with crop-wise recommendations of nutrients and fertilisers required for individual farms.', applyUrl: 'https://soilhealth.dac.gov.in' },
+  { _id: '5', name: 'PM Kisan Maan Dhan Yojana', level: 'Central', state: null, category: ['Pension'], amount: '₹3,000/month pension', description: 'Voluntary and contributory pension scheme for small and marginal farmers to ensure social security after the age of 60.', applyUrl: 'https://pmkmy.gov.in' },
+];
+
 export default function PersonalizedDashboard() {
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get('token');
+  const preview = urlParams.get('preview') === '1';
   
-  const [loading, setLoading] = useState(true);
-  const [schemes, setSchemes] = useState<Scheme[]>([]);
+  const [loading, setLoading] = useState(!preview);
+  const [schemes, setSchemes] = useState<Scheme[]>(preview ? MOCK_SCHEMES : []);
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (preview) return; // mock data already set
     if (token) {
       fetchEligibleSchemes(token);
     } else {
       setError('Invalid access. Please use the link sent to your WhatsApp.');
       setLoading(false);
     }
-  }, [token]);
+  }, [token, preview]);
 
   const fetchEligibleSchemes = async (token: string) => {
     try {
@@ -60,7 +70,7 @@ export default function PersonalizedDashboard() {
     return (
       <div className="personalized-dashboard">
         <div className="error-container">
-          <div className="error-icon">⚠️</div>
+          <div className="error-icon"></div>
           <h2>Access Error</h2>
           <p>{error}</p>
         </div>
@@ -91,7 +101,7 @@ export default function PersonalizedDashboard() {
         ) : schemes.length > 0 ? (
           <>
             <div className="schemes-header">
-              <h2>🎯 Your Personalized Schemes</h2>
+              <h2>Your Personalized Schemes</h2>
               <p className="schemes-count">
                 We found <strong>{schemes.length}</strong> schemes matching your profile
               </p>
@@ -142,7 +152,7 @@ export default function PersonalizedDashboard() {
           </>
         ) : (
           <div className="empty-state">
-            <div className="empty-icon">📋</div>
+            <div className="empty-icon"></div>
             <h3>No Matching Schemes Found</h3>
             <p>We couldn't find any schemes matching your current profile.</p>
             <p className="help-text">
@@ -154,10 +164,16 @@ export default function PersonalizedDashboard() {
 
       {/* Footer */}
       <footer className="dashboard-footer">
-        <p>Powered by Yojna Mitra</p>
-        <p className="footer-note">
-          These schemes are curated based on your profile. For official information, visit the respective scheme websites.
-        </p>
+        <div className="footer-inner">
+          <div className="footer-brand">
+            <img src="/logo.png" alt="Yojna Mitra" className="footer-logo" />
+            <span className="footer-brand-name">Yojna Mitra</span>
+          </div>
+          <p className="footer-note">
+            Schemes are curated based on your profile. Always verify eligibility on the official scheme website before applying.
+          </p>
+          <p className="footer-copy">&copy; 2026 Yojna Mitra. All rights reserved.</p>
+        </div>
       </footer>
     </div>
   );

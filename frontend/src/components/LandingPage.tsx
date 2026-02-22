@@ -3,15 +3,7 @@ import '../styles/LandingPage.css';
 
 const HeroCanvas = lazy(() => import('./HeroCanvas'));
 
-interface LandingPageProps {
-  onGetStarted: () => void;
-  onSignIn: () => void;
-  onSignUp: () => void;
-  isAuthenticated?: boolean;
-  farmerName?: string;
-}
-
-function LandingPage({ onGetStarted, onSignIn, onSignUp, isAuthenticated, farmerName }: LandingPageProps) {
+function LandingPage() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -50,10 +42,14 @@ function LandingPage({ onGetStarted, onSignIn, onSignUp, isAuthenticated, farmer
             <a href="#features">Features</a>
           </div>
           <div className="nav-actions">
-            <button className="nav-signin" onClick={onSignIn}>Sign In</button>
-            <button className="nav-cta" onClick={onSignUp}>
-              Sign Up
-            </button>
+            <a
+              href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_BOT_NUMBER || ''}?text=Hi`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="nav-cta"
+            >
+              💬 Chat on WhatsApp
+            </a>
           </div>
         </div>
       </nav>
@@ -71,18 +67,19 @@ function LandingPage({ onGetStarted, onSignIn, onSignUp, isAuthenticated, farmer
               <span className="gradient-text">You Can Trust.</span>
             </h1>
             <p className="hero-description">
-              {isAuthenticated && farmerName ? (
-                <>Welcome back, <strong>{farmerName}</strong>! Continue exploring schemes tailored for you.</>
-              ) : (
-                <>Leveraging technology to bring unprecedented transparency to agricultural financing. 
-                Access subsidies, loans, and insurance schemes designed specifically for farmers across India.</>
-              )}
+              Leveraging technology to bring unprecedented transparency to agricultural financing.
+              Answer 8 quick questions on WhatsApp and get a personalised list of schemes you're eligible for.
             </p>
             <div className="hero-actions">
-              <button className="btn-primary" onClick={onGetStarted}>
-                <span>{isAuthenticated ? 'Continue to Dashboard' : 'Start Your Journey'}</span>
+              <a
+                href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_BOT_NUMBER || ''}?text=Hi`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary"
+              >
+                <span>Check Your Eligibility on WhatsApp</span>
                 <span className="btn-icon">→</span>
-              </button>
+              </a>
             </div>
             <div className="hero-stats-bottom">
               <div className="stat-card">
@@ -208,28 +205,7 @@ function LandingPage({ onGetStarted, onSignIn, onSignUp, isAuthenticated, farmer
 
           <div className="two-paths-grid">
 
-            {/* ── Path 1: Web ── */}
-            <div className="path-card path-web">
-              <div className="path-icon-wrap path-icon-web">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                  <line x1="8" y1="21" x2="16" y2="21"/>
-                  <line x1="12" y1="17" x2="12" y2="21"/>
-                </svg>
-              </div>
-              <h3 className="path-title">Use the Website</h3>
-              <p className="path-subtitle">Full dashboard · Save profile · Instant access</p>
-              <ol className="path-steps">
-                <li><span className="step-num">1</span> Sign up with email — takes 2 minutes</li>
-                <li><span className="step-num">2</span> Fill in 8 profile questions (farmer type, income, land, etc.)</li>
-                <li><span className="step-num">3</span> Instantly see all eligible government schemes on your dashboard</li>
-              </ol>
-              <button className="path-cta path-cta-web" onClick={onSignUp}>
-                Sign Up Free →
-              </button>
-            </div>
-
-            {/* ── Path 2: WhatsApp ── */}
+            {/* ── WhatsApp Path ── */}
             <div className="path-card path-whatsapp">
               <div className="path-icon-wrap path-icon-wa">
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor">
@@ -293,9 +269,14 @@ function LandingPage({ onGetStarted, onSignIn, onSignUp, isAuthenticated, farmer
                   </div>
                 </div>
               </div>
-              <button className="btn-primary" onClick={onGetStarted}>
-                {isAuthenticated ? 'Go to My Dashboard' : 'Start Now - It\'s Free'}
-              </button>
+              <a
+                href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_BOT_NUMBER || ''}?text=Hi`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary"
+              >
+                Start Now on WhatsApp →
+              </a>
             </div>
             <div className="benefits-visual">
               <div className="benefit-image-card">
