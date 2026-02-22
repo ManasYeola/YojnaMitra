@@ -678,3 +678,83 @@
     font-size: 0.95rem;
   }
 }
+
+/* ─── Error / expired link panel ─────────────────────────────────────────── */
+.pd-error-card {
+  max-width: 640px;
+  margin: 2rem auto;
+  text-align: left;
+}
+
+.pd-error-options-label {
+  font-weight: 700;
+  color: #1e5a3e;
+  font-size: 0.95rem;
+  margin: 1.25rem 0 0.75rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pd-error-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pd-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+}
+
+.pd-option-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.pd-option strong {
+  display: block;
+  font-size: 0.95rem;
+  color: #1e3a2f;
+  margin-bottom: 0.25rem;
+}
+
+.pd-option p {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0 0 0.6rem !important;
+  line-height: 1.5;
+}
+
+.pd-option-link {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e5a3e;
+  text-decoration: none;
+  border: 2px solid #1e5a3e;
+  padding: 0.3rem 0.85rem;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.pd-option-link:hover {
+  background: #1e5a3e;
+  color: white;
+}
+
+.pd-option-wa {
+  color: #16a34a;
+  border-color: #16a34a;
+}
+
+.pd-option-wa:hover {
+  background: #16a34a;
+  color: white;
+}
+

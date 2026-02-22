@@ -1,6 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-// All states the conversation can be in
 export type SessionState =
   | 'new'
   | 'ask_name'

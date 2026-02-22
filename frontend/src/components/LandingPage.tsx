@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import '../styles/LandingPage.css';
+
+const HeroCanvas = lazy(() => import('./HeroCanvas'));
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -98,26 +100,9 @@ function LandingPage({ onGetStarted, onSignIn, onSignUp, isAuthenticated, farmer
             </div>
           </div>
           <div className="hero-visual">
-            <div className="floating-card card-verified">
-              <div className="card-icon-badge">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#14b8a6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <div className="card-text">
-                <div className="card-title">100% Verified</div>
-                <div className="card-subtitle">Authentic Financial Schemes</div>
-              </div>
-            </div>
-            <div className="floating-card card-image">
-              <div className="card-image-wrapper">
-                <div className="image-placeholder">
-                  <div className="image-icon">🌾</div>
-                  <div className="image-text">Farm & Agriculture</div>
-                </div>
-              </div>
-              <div className="card-caption">Empowering Rural India</div>
-            </div>
+            <Suspense fallback={null}>
+              <HeroCanvas />
+            </Suspense>
           </div>
         </div>
       </section>
@@ -147,116 +132,130 @@ function LandingPage({ onGetStarted, onSignIn, onSignUp, isAuthenticated, farmer
       {/* Features Section */}
       <section id="features" className="features-section">
         <div className="section-container">
-          <div className="section-header">
-            <div className="section-badge">Why Choose Us</div>
-            <h2 className="section-title">Everything You Need in One Platform</h2>
-            <p className="section-description">
-              Comprehensive tools and resources designed specifically for farmers
-            </p>
-          </div>
           <div className="features-grid">
-            <div className="feature-card">
-              <h3>Smart Matching</h3>
-              <p>AI-powered system matches you with the most relevant schemes based on your profile</p>
-              <ul className="feature-list">
-                <li>Personalized recommendations</li>
-                <li>Eligibility checker</li>
-                <li>Best fit analysis</li>
-              </ul>
+
+            <div className="feature-card feature-card--teal">
+              <div className="feature-icon-wrapper">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="m21 21-4.35-4.35"/>
+                  <path d="M11 8v3l2 2"/>
+                </svg>
+              </div>
+              <div className="feature-card-body">
+                <h3>Smart Matching</h3>
+                <p>AI-powered system matches you with the most relevant schemes based on your profile</p>
+                <ul className="feature-list">
+                  <li>Personalized recommendations</li>
+                  <li>Eligibility checker</li>
+                  <li>Best fit analysis</li>
+                </ul>
+              </div>
             </div>
-            <div className="feature-card">
-              <h3>Quick Application</h3>
-              <p>Apply to multiple schemes with minimal information and documentation</p>
-              <ul className="feature-list">
-                <li>One-time registration</li>
-                <li>Auto-fill forms</li>
-                <li>Bulk applications</li>
-              </ul>
+
+            <div className="feature-card feature-card--green">
+              <div className="feature-icon-wrapper">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="5" width="20" height="14" rx="2"/>
+                  <path d="M2 10h20"/>
+                  <path d="M6 15h4"/>
+                  <path d="M14 15h2"/>
+                </svg>
+              </div>
+              <div className="feature-card-body">
+                <h3>Financial Support</h3>
+                <p>Access loans, subsidies, and insurance schemes tailored to your needs</p>
+                <ul className="feature-list">
+                  <li>Low-interest loans</li>
+                  <li>Crop insurance</li>
+                  <li>Equipment subsidies</li>
+                </ul>
+              </div>
             </div>
-            <div className="feature-card">
-              <h3>Real-time Tracking</h3>
-              <p>Monitor your application status and get instant updates on approvals</p>
-              <ul className="feature-list">
-                <li>Status notifications</li>
-                <li>Timeline tracking</li>
-                <li>SMS & Email alerts</li>
-              </ul>
+
+            <div className="feature-card feature-card--emerald">
+              <div className="feature-icon-wrapper">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+              </div>
+              <div className="feature-card-body">
+                <h3>Insurance Help</h3>
+                <p>Get matched with the right crop and farm insurance schemes to protect your livelihood</p>
+                <ul className="feature-list">
+                  <li>Crop insurance</li>
+                  <li>Disaster relief schemes</li>
+                  <li>Govt-backed coverage</li>
+                </ul>
+              </div>
             </div>
-            <div className="feature-card">
-              <h3>Financial Support</h3>
-              <p>Access loans, subsidies, and insurance schemes tailored to your needs</p>
-              <ul className="feature-list">
-                <li>Low-interest loans</li>
-                <li>Crop insurance</li>
-                <li>Equipment subsidies</li>
-              </ul>
-            </div>
-            <div className="feature-card">
-              <h3>Multilingual Support</h3>
-              <p>Use the platform in your preferred language for better understanding</p>
-              <ul className="feature-list">
-                <li>10+ languages</li>
-                <li>Voice assistance</li>
-                <li>Regional support</li>
-              </ul>
-            </div>
-            <div className="feature-card">
-              <h3>Secure & Safe</h3>
-              <p>Your data is protected with bank-level security and encryption</p>
-              <ul className="feature-list">
-                <li>256-bit encryption</li>
-                <li>Data privacy</li>
-                <li>Govt compliance</li>
-              </ul>
-            </div>
+
           </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section id="how-it-works" className="how-it-works-section">
+      {/* ── Two Ways to Access ── */}
+      <section id="how-it-works" className="two-paths-section">
         <div className="section-container">
           <div className="section-header">
-            <div className="section-badge">Simple Process</div>
-            <h2 className="section-title">Get Started in 3 Easy Steps</h2>
+            <div className="section-badge">Choose Your Way</div>
+            <h2 className="section-title">Two Ways to Find Your Schemes</h2>
             <p className="section-description">
-              From registration to approval, we've made it incredibly simple
+              Use our website for a full dashboard experience, or chat on WhatsApp for an instant personalised link — whichever works for you.
             </p>
           </div>
-          <div className="steps-container">
-            <div className="step">
-              <div className="step-number">01</div>
-              <div className="step-content">
-                <h3>Create Your Profile</h3>
-                <p>Share basic information about your farm, crops, and land. Takes less than 2 minutes.</p>
-                <div className="step-features">
-                  <span>Quick registration</span>
-                  <span>Minimal details</span>
-                </div>
+
+          <div className="two-paths-grid">
+
+            {/* ── Path 1: Web ── */}
+            <div className="path-card path-web">
+              <div className="path-icon-wrap path-icon-web">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                  <line x1="8" y1="21" x2="16" y2="21"/>
+                  <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
               </div>
+              <h3 className="path-title">Use the Website</h3>
+              <p className="path-subtitle">Full dashboard · Save profile · Instant access</p>
+              <ol className="path-steps">
+                <li><span className="step-num">1</span> Sign up with email — takes 2 minutes</li>
+                <li><span className="step-num">2</span> Fill in 8 profile questions (farmer type, income, land, etc.)</li>
+                <li><span className="step-num">3</span> Instantly see all eligible government schemes on your dashboard</li>
+              </ol>
+              <button className="path-cta path-cta-web" onClick={onSignUp}>
+                Sign Up Free →
+              </button>
             </div>
-            <div className="step">
-              <div className="step-number">02</div>
-              <div className="step-content">
-                <h3>Discover Schemes</h3>
-                <p>View personalized scheme recommendations matched to your profile and requirements.</p>
-                <div className="step-features">
-                  <span>Smart suggestions</span>
-                  <span>Eligibility check</span>
-                </div>
+
+            {/* ── Path 2: WhatsApp ── */}
+            <div className="path-card path-whatsapp">
+              <div className="path-icon-wrap path-icon-wa">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
               </div>
+              <h3 className="path-title">Use WhatsApp</h3>
+              <p className="path-subtitle">No sign-up · Works on any phone · Instant link</p>
+              <ol className="path-steps">
+                <li><span className="step-num">1</span> Send <strong>"Hi"</strong> to our WhatsApp bot</li>
+                <li><span className="step-num">2</span> Answer 8 quick questions in the chat (takes ~3 minutes)</li>
+                <li><span className="step-num">3</span> Receive a personalised link — tap to see your matched schemes</li>
+              </ol>
+              <a
+                href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_BOT_NUMBER || ''}?text=Hi`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="path-cta path-cta-wa"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{flexShrink:0}}>
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                Chat on WhatsApp
+              </a>
             </div>
-            <div className="step">
-              <div className="step-number">03</div>
-              <div className="step-content">
-                <h3>Apply & Track</h3>
-                <p>Submit applications and track their progress in real-time until approval.</p>
-                <div className="step-features">
-                  <span>One-click apply</span>
-                  <span>Live tracking</span>
-                </div>
-              </div>
-            </div>
+
           </div>
         </div>
       </section>
@@ -306,60 +305,6 @@ function LandingPage({ onGetStarted, onSignIn, onSignUp, isAuthenticated, farmer
                     <div className="overlay-number">₹2.5L</div>
                     <div className="overlay-label">Avg. Benefit</div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section id="testimonials" className="testimonials-section">
-        <div className="section-container">
-          <div className="section-header">
-            <div className="section-badge">Success Stories</div>
-            <h2 className="section-title">What Farmers Say About Us</h2>
-            <p className="section-description">
-              Real stories from farmers who transformed their lives
-            </p>
-          </div>
-          <div className="testimonials-grid">
-            <div className="testimonial-card">
-              <div className="testimonial-rating">⭐⭐⭐⭐⭐</div>
-              <p className="testimonial-text">
-                "I received ₹50,000 subsidy for my new tractor within 2 weeks. The process was so simple, I couldn't believe it!"
-              </p>
-              <div className="testimonial-author">
-                <div className="author-avatar">👨‍🌾</div>
-                <div className="author-info">
-                  <div className="author-name">Ramesh Kumar</div>
-                  <div className="author-location">Punjab</div>
-                </div>
-              </div>
-            </div>
-            <div className="testimonial-card">
-              <div className="testimonial-rating">⭐⭐⭐⭐⭐</div>
-              <p className="testimonial-text">
-                "Never knew I was eligible for so many schemes. This platform found 7 schemes I could apply to!"
-              </p>
-              <div className="testimonial-author">
-                <div className="author-avatar">👩‍🌾</div>
-                <div className="author-info">
-                  <div className="author-name">Sunita Devi</div>
-                  <div className="author-location">Maharashtra</div>
-                </div>
-              </div>
-            </div>
-            <div className="testimonial-card">
-              <div className="testimonial-rating">⭐⭐⭐⭐⭐</div>
-              <p className="testimonial-text">
-                "The crop insurance I got through this platform saved my family during the drought. Forever grateful!"
-              </p>
-              <div className="testimonial-author">
-                <div className="author-avatar">👨‍🌾</div>
-                <div className="author-info">
-                  <div className="author-name">Vijay Patel</div>
-                  <div className="author-location">Gujarat</div>
                 </div>
               </div>
             </div>

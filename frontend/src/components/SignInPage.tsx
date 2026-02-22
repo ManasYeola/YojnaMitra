@@ -56,7 +56,7 @@ function SignInPage({ onAuthSuccess, onBack, onSwitchToSignUp }: SignInPageProps
           const user = response.data.user;
           
           // Check if user has complete profile
-          if (!user.name || !user.state || !user.district || !user.landSize || !user.cropType) {
+          if (!user.name || !user.state || !user.farmerType) {
             setError('Account not found or incomplete. Please sign up first.');
             setLoading(false);
             return;
@@ -71,7 +71,7 @@ function SignInPage({ onAuthSuccess, onBack, onSwitchToSignUp }: SignInPageProps
           const user = response.data.user;
           
           // Check if user has complete profile
-          if (!user.name || !user.state || !user.district || !user.landSize || !user.cropType) {
+          if (!user.name || !user.state || !user.farmerType) {
             setError('Account not found or incomplete. Please sign up first.');
             setLoading(false);
             return;
