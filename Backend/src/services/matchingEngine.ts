@@ -179,6 +179,16 @@ export async function matchSchemes(
 
   const col = schemesDb.db.collection<SyncedScheme>('schemes');
 
+  // Diagnostic: log total count in collection
+  const totalCount = await col.countDocuments({});
+  const activeCount = await col.countDocuments({ isActive: true });
+  console.log(`🔍 matchSchemes: total=${totalCount}, isActive=true: ${activeCount}, user.state="${user.state}"`);
+
+  if (totalCount === 0) {
+    console.warn('⚠  schemes collection is empty — sync-service has not run yet');
+    return { eligible: [], nearMiss: [] };
+  }
+
   // Pass 1 — MongoDB pre-filter: active + (Central-level OR matches user's state)
   const statePattern = new RegExp(
     user.state.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
@@ -188,7 +198,7 @@ export async function matchSchemes(
   const candidates = await col
     .find(
       {
-        isActive: true,
+        isActive: { $ne: false },   // include docs where isActive is true OR not set
         $or: [
           { level: { $in: ['Central', 'All', 'central', 'all'] } },
           { state: { $regex: statePattern } },
@@ -198,6 +208,8 @@ export async function matchSchemes(
     )
     .limit(5000)
     .toArray();
+
+  console.log(`🔍 matchSchemes: ${candidates.length} candidates found for state="${user.state}"`);
 
   // Pass 2 — check each scheme and classify as eligible / near-miss / skip
   const eligible: string[] = [];
