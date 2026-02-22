@@ -184,7 +184,7 @@ export const handleWhatsappWebhook = async (req: Request, res: Response): Promis
     }
 
     // Update activity timestamp
-    session.lastActivityAt = new Date();
+    session.lastActivity = new Date();
 
     // ── Handle "menu" keyword at any time ──
     if (text === 'menu' || text === 'hi' || text === 'hello' || text === 'start') {

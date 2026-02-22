@@ -1,16 +1,36 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+export type SessionState =
+  | 'new'
+  | 'ask_name'
+  | 'q1_state'
+  | 'q2_farmer_type'
+  | 'q3_land'
+  | 'q4_age'
+  | 'q5_caste'
+  | 'q6_income'
+  | 'q7_bpl'
+  | 'q8_special'
+  | 'menu'
+  | 'complete';
+
+export interface SessionAnswers {
+  name?: string;
+  state?: string;
+  farmerType?: string;
+  landOwnership?: string;
+  ageRange?: string;
+  caste?: string;
+  incomeRange?: string;
+  isBPL?: boolean;
+  specialCategory?: string[];
+}
+
 export interface IWhatsAppSession extends Document {
   phoneNumber: string;
-  stage: 'greeting' | 'state' | 'occupation' | 'landOwnership' | 'age' | 'caste' | 'income' | 'bpl' | 'specialCategory' | 'done';
   state: string;
-  occupationType: string;
-  landOwnership: string;
-  age: string;
-  casteCategory: string;
-  income: string;
-  bplCard: string;
-  specialCategories: string[];
+  answers: SessionAnswers;
+  userId?: string;
   lastActivity: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -24,42 +44,17 @@ const whatsAppSessionSchema = new Schema<IWhatsAppSession>(
       unique: true,
       index: true,
     },
-    stage: {
-      type: String,
-      enum: ['greeting', 'state', 'occupation', 'landOwnership', 'age', 'caste', 'income', 'bpl', 'specialCategory', 'done'],
-      default: 'greeting',
-    },
     state: {
       type: String,
-      default: '',
+      default: 'new',
     },
-    occupationType: {
+    answers: {
+      type: Schema.Types.Mixed,
+      default: {},
+    },
+    userId: {
       type: String,
       default: '',
-    },
-    landOwnership: {
-      type: String,
-      default: '',
-    },
-    age: {
-      type: String,
-      default: '',
-    },
-    casteCategory: {
-      type: String,
-      default: '',
-    },
-    income: {
-      type: String,
-      default: '',
-    },
-    bplCard: {
-      type: String,
-      default: '',
-    },
-    specialCategories: {
-      type: [String],
-      default: [],
     },
     lastActivity: {
       type: Date,
